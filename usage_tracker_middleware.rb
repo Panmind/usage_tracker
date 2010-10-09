@@ -50,6 +50,7 @@ class UsageTrackerMiddleware
       #sock.write(Marshal.dump(request))
       sock.close
     rescue Errno::ECONNREFUSED, Errno::EHOSTUNREACH
+      :ok
     end
     @app.call(env)
   end

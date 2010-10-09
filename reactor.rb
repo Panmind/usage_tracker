@@ -8,23 +8,25 @@ require 'extras/usage_tracker/initializer'
 
 module UsageWriter
 UsageTrackerSetup.init()
-#function(doc) {
-#  emit([doc._id,doc.user_id], doc);
-#}
+  # this function assures that a global variable for the couchrest database-object is available (consider making the DB-localisation settable from the application config)
+  # this function is called EVERY TIME a new connection is made (given the use of this event-machine reactor as a server for a webapp this means that this function is called on every connection) 
   def initialize
     @db ||= CouchRest.database!("localhost:5984/pm_usage")
   end
+  # this function is called upon every data reception
   def receive_data(data)
     d = eval data
-    d["_id"] = Time.now.to_f.to_s.ljust(16,"0")
-    puts "usage write received:"
-    puts "#{d.class.name}"
-    puts "#{d}"
-    puts d.to_json
-    @db.save_doc(d)
+    # timestamp as _id has the advantage that documents are sorted automatically by couchdb, eventual duplication (multiple servers) of the id are avoided by adding a random string at the end 
+    begin
+      d["_id"] = Time.now.to_f.to_s.ljust(16,"0")
+    rescue RestClient::Conflict
+      d["_id"] = Time.now.to_f.to_s.ljust(16,"0") + (0..9).to_a.rand.to_s
+    end
+@db.save_doc(d)
   end
 end
 
+# the reactor
 EventMachine::run do
   host = '0.0.0.0'
   port = 8765
