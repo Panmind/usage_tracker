@@ -5,13 +5,17 @@ require 'json/add/rails'
 require 'eventmachine'
 require 'couchrest'
 require 'extras/usage_tracker/initializer'
+require 'yaml'
 
 module UsageWriter
-UsageTrackerSetup.init()
+env = ARGV.length > 0 ? ARGV[0] : "development"
+@couchdb_url = YAML::load(File.open(File.dirname(__FILE__) + "/../../config/settings.yml"))[env][:usage_tracker_couchdb]
+ARGV.push @couchdb_url
+UsageTrackerSetup.init(@couchdb_url)
   # this function assures that a global variable for the couchrest database-object is available (consider making the DB-localisation settable from the application config)
   # this function is called EVERY TIME a new connection is made (given the use of this event-machine reactor as a server for a webapp this means that this function is called on every connection) 
   def initialize
-    @db ||= CouchRest.database!("localhost:5984/pm_usage")
+    @db ||= CouchRest.database!(ARGV[1])
   end
   # this function is called upon every data reception
   def receive_data(data)

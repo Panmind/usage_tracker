@@ -1,8 +1,8 @@
 module UsageTrackerSetup
   ## this function assures that the required couchdb DB is up and running and has a set of basic queries already registered.
-  def UsageTrackerSetup.init()
+  def UsageTrackerSetup.init(couchdb_url)
     puts "db-setup"
-    db = CouchRest.database!("localhost:5984/pm_usage")
+    db = CouchRest.database!(couchdb_url)
     view = db.get('_design/basic') rescue nil
     if view.nil?
       db.save_doc({

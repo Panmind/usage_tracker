@@ -1,0 +1,15 @@
+:defaults: &defaults
+  :usage_tracker_couchdb: "http://127.0.0.1:5984/pm_usage"
+  :usage_tracker_em: "0.0.0.0:8765"
+
+test:
+  <<: *defaults
+  :usage_tracker_couchdb: "http://127.0.0.1:5984/pm_usage_test"
+  :usage_tracker_em: "0.0.0.0:9876"
+  :test_usage_tracking: true
+
+development:
+  <<: *defaults
+
+production
+  <<: *defaults
