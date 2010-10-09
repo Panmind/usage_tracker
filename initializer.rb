@@ -101,8 +101,42 @@ module UsageTrackerSetup
 	         return sum(values);
 	       }
               ]
-	    }
-	 }
+	    },
+			'average_duration_of_path' => {
+       "map" =>  %[
+			    function(doc) {
+					  if (doc.duration)
+						   emit(doc.request_path, doc.duration);
+					}
+					],
+			    'reduce' =>  %[
+					   function(keys,values){
+						 		return Math.round(sum(values) / values.length)
+						}
+					]
+				},
+			'average_duration_of_area' => {
+       "map" =>  %[
+			    function(doc) {
+		   			arr = ['inbox','res','projects','users','account','publish','search']
+		   			for (i=0;i<arr.length;i++){
+	    	     	if (doc.request_path.indexOf("/"+arr[i]+"/") != -1) {
+		   					area = arr[i]
+		     			}
+						}	 
+					  if (doc.duration)
+						   emit(area, doc.duration);
+					}
+					],
+			    'reduce' =>  %[
+					   function(keys,values){
+						 		return Math.round(sum(values) / values.length)
+						}
+					]
+			}
+
+
+	 		}
       })
     end
   end
