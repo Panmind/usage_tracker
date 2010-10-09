@@ -1,4 +1,5 @@
 module UsageTrackerSetup
+  ## this function assures that the required couchdb DB is up and running and has a set of basic queries already registered.
   def UsageTrackerSetup.init()
     puts "db-setup"
     db = CouchRest.database!("localhost:5984/pm_usage")
@@ -68,20 +69,14 @@ module UsageTrackerSetup
 	  'user_area_count' => {
 	      'map' =>%[ 
 	      	 function(doc) {
-	    	   if (doc.request_path.indexOf("res/") != -1) {
-                   } else if (doc.request_path.indexOf("projects/") != -1) {
-                     area = "projects"
-                   } else if (doc.request_path.indexOf("users/") != -1) {
-                     area = "users"
-                   } else if (doc.request_path.indexOf("account/") != -1) {
-                     area = "account"
-                   } else if (doc.request_path.indexOf("publish/") != -1) {
-                     area = "publish"
-		   } else if (doc.request_path.indexOf("search/") != -1) {
-                     area = "search"
-		   } 
-		   emit([doc.user_id, area], 1);
-                 }
+		  arr = ['inbox','res','projects','users','account','publish','search']
+		  for (i=0;i<arr.length;i++){
+	    	    if (doc.request_path.indexOf("/"+arr[i]+"/") != -1) {
+		   	area = arr[i]
+		    }
+		  } 
+		  emit([doc.user_id, area], 1);
+		}
 	      ],
 	      'reduce' => %[
 	        function(keys, values,rereduce) {
@@ -92,21 +87,14 @@ module UsageTrackerSetup
 	  'area_count' => {
 	      'map' =>%[ 
 	      	 function(doc) {
-	    	   if (doc.request_path.indexOf("res/") != -1) {
-                     area = "res"
-                   } else if (doc.request_path.indexOf("projects/") != -1) {
-                     area = "projects"
-                   } else if (doc.request_path.indexOf("users/") != -1) {
-                     area = "users"
-                   } else if (doc.request_path.indexOf("account/") != -1) {
-                     area = "account"
-                   } else if (doc.request_path.indexOf("publish/") != -1) {
-                     area = "publish"
-		   } else if (doc.request_path.indexOf("search/") != -1) {
-                     area = "search"
-		   } 
+		   arr = ['inbox','res','projects','users','account','publish','search']
+		   for (i=0;i<arr.length;i++){
+	    	     if (doc.request_path.indexOf("/"+arr[i]+"/") != -1) {
+		   	area = arr[i]
+		     } 
+                   }
 		   emit(area, 1);
-                 }
+		 }
 	      ],
 	      'reduce' => %[
 	        function(keys, values,rereduce) {
