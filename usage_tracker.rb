@@ -3,6 +3,7 @@
 # see app/middleware/usage_tracker_middleware.rb
 ActionController::Dispatcher.middleware.insert_before(
     Rack::Head,
-    UsageTrackerMiddleware
+    UsageTrackerMiddleware,
+		APPLICATION_CONFIG[:usage_tracker_em]
 )
 

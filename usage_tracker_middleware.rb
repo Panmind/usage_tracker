@@ -3,9 +3,9 @@ require 'socket'
 
 # this middleware sends the incoming request-object to a specified socket.
 class UsageTrackerMiddleware
-  def initialize(app, options = {})
+  def initialize(app, server_and_port)
     @app = app
-    @options = options
+    @server, @port = server_and_port.split(":")
   end
 
   def call(env)
@@ -13,8 +13,7 @@ class UsageTrackerMiddleware
     response = @app.call(env)
     duration = ((Time::now - arrival) * 1000).to_i # convert to millisecs
 		begin
-
-      sock = TCPSocket.open("localhost", 8765)
+      sock = TCPSocket.open(@server, @port.to_i)
       request = Rack::Request.new(env)
       session = env["rack.session"]
       if true || @options[:reassemble]
