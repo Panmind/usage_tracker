@@ -69,10 +69,10 @@ module UsageTrackerSetup
 	  'user_area_count' => {
 	      'map' =>%[ 
 	      	 function(doc) {
-		  arr = ['inbox','res','projects','users','account','publish','search']
+		  arr = ['','inbox','res','projects','users','account','publish','search']
 		  for (i=0;i<arr.length;i++){
 	    	    if (doc.request_path.indexOf("/"+arr[i]+"/") != -1) {
-		   	area = arr[i]
+		   					area = (arr[i] != '' ? arr[i] : "homepage(/)")
 		    }
 		  } 
 		  emit([doc.user_id, area], 1);
@@ -87,10 +87,10 @@ module UsageTrackerSetup
 	  'area_count' => {
 	      'map' =>%[ 
 	      	 function(doc) {
-		   arr = ['inbox','res','projects','users','account','publish','search']
+		   arr = ['','inbox','res','projects','users','account','publish','search']
 		   for (i=0;i<arr.length;i++){
 	    	     if (doc.request_path.indexOf("/"+arr[i]+"/") != -1) {
-		   	area = arr[i]
+		   					area = (arr[i] != '' ? arr[i] : "homepage(/)")
 		     } 
                    }
 		   emit(area, 1);
@@ -118,10 +118,10 @@ module UsageTrackerSetup
 			'average_duration_of_area' => {
        "map" =>  %[
 			    function(doc) {
-		   			arr = ['inbox','res','projects','users','account','publish','search']
+		   			arr = ['','inbox','res','projects','users','account','publish','search']
 		   			for (i=0;i<arr.length;i++){
-	    	     	if (doc.request_path.indexOf("/"+arr[i]+"/") != -1) {
-		   					area = arr[i]
+	    	     	if (doc.request_path.indexOf("/"+arr[i]) != -1) {
+		   					area = (arr[i] != '' ? arr[i] : "homepage(/)")
 		     			}
 						}	 
 					  if (doc.duration)
