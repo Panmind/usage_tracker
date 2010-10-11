@@ -43,14 +43,9 @@ class UsageTrackerMiddleware
 	  "QUERY_STRING"].each do |it|
 	      data_object[it.downcase.to_sym] = env[it]
       end
- 
-        #sock.write(env.class.name)
-        #sock.write("wer isses?: #{session[:user_id]} inspect: #{session.inspect}")
-        #sock.write(env.keys)
-      end
+		 end
 			data_object[:duration] = duration
       sock.write(data_object)
-      #sock.write(Marshal.dump(request))
       sock.close
     rescue Errno::ECONNREFUSED, Errno::EHOSTUNREACH
       :ok

@@ -1,0 +1,25 @@
+Panmind Usage Tracker
+
+what is it?
+1. a rack-middleware sends selected parts of the request ennvironment to a socket,
+2. where an eventmachine loop is waiting for data which will be
+3. sent to a couchdb-database for storage/analysis
+
+to deploy:
+    * the middleware is loaded automatically
+    * eventmachine: start it with this command:
+      $ ruby extras/usage_tracker/reactor.rb <environment>
+    * couchdb: it uses the already running couchdb instance (creates the database if it's not existing)
+
+
+there is a test of the system, which is part of:
+$ rake test:integration
+remember to start a test-EventMachine-loop before the test:
+  $ ruby extras/usage_tracker/reactor.rb test
+and to set to true a boolean in settings.yml:
+  :test_usage_tracking: true
+
+configurations:
+- TCP-socket where Event-machine is listening
+- urls of the couchdb databases
+- whether to run tests
