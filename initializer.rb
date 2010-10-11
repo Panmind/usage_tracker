@@ -133,9 +133,20 @@ module UsageTrackerSetup
 						 		return Math.round(sum(values) / values.length)
 						}
 					]
-			}
-
-
+			},
+			'by_user_timestamp_area' => {
+       "map" =>  %[
+			    function(doc) {
+		   			arr = ['','inbox','res','projects','users','account','publish','search']
+		   			for (i=0;i<arr.length;i++){
+	    	     	if (doc.request_path.indexOf("/"+arr[i]) != -1) {
+		   					area = (arr[i] != '' ? arr[i] : "homepage(/)")
+		     			}
+						}	 
+					  emit([doc.user_id, doc._id, area],doc)
+					}
+					]
+				}
 	 		}
       })
     end

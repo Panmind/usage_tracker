@@ -15,8 +15,8 @@ module UsageWriter
     end 
 
     # basic setup
-    SETTINGS =  YAML::load(File.open(File.dirname(__FILE__) + "/../../config/settings.yml"))[ARGV[0]]
     ARGV.push "development" unless  ARGV.length > 0
+    SETTINGS =  YAML::load(File.open(File.dirname(__FILE__) + "/../../config/settings.yml"))[ARGV[0]]
     @couchdb_url = SETTINGS[:usage_tracker_couchdb]
     puts "using couchdb database:#{@couchdb_url}"
     ARGV.push @couchdb_url
