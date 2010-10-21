@@ -31,10 +31,11 @@ module UsageWriter
       # eventual duplication (multiple servers) of the id are avoided by adding a random string at the end 
       begin
         d["_id"] = Time.now.to_f.to_s.ljust(16,"0")
+        @db.save_doc(d)
       rescue RestClient::Conflict
         d["_id"] = Time.now.to_f.to_s.ljust(16,"0") + (0..9).to_a.rand.to_s
+        @db.save_doc(d)
       end
-      @db.save_doc(d)
     end
 
 end

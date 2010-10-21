@@ -1,5 +1,7 @@
 require 'rack/utils'
 require 'socket'
+require 'extras/usage_tracker/UT_process_dict'
+
 
 # this middleware sends the incoming request-object to a specified socket.
 class UsageTrackerMiddleware
@@ -45,6 +47,8 @@ class UsageTrackerMiddleware
       end
 		 end
 			data_object[:duration] = duration
+			sr = UTProcessDict::get_search_result
+			data_object[:search_result] = sr if sr
       sock.write(data_object)
       sock.close
     rescue Errno::ECONNREFUSED, Errno::EHOSTUNREACH
