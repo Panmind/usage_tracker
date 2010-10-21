@@ -1,3 +1,5 @@
+# encapsulates calls to Thread.current 
+# called from the network search controller in order to track search results
 class UTProcessDict
     def self.set_search_result(data)
       data = shape_data(data)
@@ -10,7 +12,7 @@ class UTProcessDict
       res
    end
    private
-   ## XXX -> ID should be enough (for polymorph types the type should be noted as well.....)
+   ## takes only the ids of the elements, only for polymorph model <asset> the type is registered
    def self.shape_data(data)
       data.each do |k,v|
         if k == :assets 
