@@ -15,6 +15,7 @@
 
 _id     : '_design/basic'
 language: 'javascript'
+version : '2010102201' # Format: YYYY MM DD VV
 views   :
   by_user_and_timestamp:
     map : |
