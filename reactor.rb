@@ -1,11 +1,8 @@
 #!/usr/bin/env ruby
 
-require 'rubygems'
-require 'json/add/rails'
-require 'eventmachine'
-require 'couchrest'
 require 'extras/usage_tracker/initializer'
-require 'yaml'
+require 'eventmachine'
+require 'json'
 
 module UsageTracker
   module Reactor

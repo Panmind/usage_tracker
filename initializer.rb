@@ -1,6 +1,9 @@
+require 'rubygems'
 require 'erb'
+require 'yaml'
 require 'pathname'
 require 'ostruct'
+require 'couchrest'
 
 module UsageTracker
   class << self
