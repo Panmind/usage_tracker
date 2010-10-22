@@ -61,7 +61,7 @@ module UsageTracker
     end
 
     def log(message)
-      puts format(message)
+      $stderr.puts format(message)
     end
 
     def raise(message)
