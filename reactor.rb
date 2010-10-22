@@ -11,7 +11,7 @@ module UsageWriter
     # basic setup
     ARGV.push "development" unless  ARGV.length > 0
     SETTINGS =  YAML::load(File.open(File.dirname(__FILE__) + "/../../config/settings.yml"))[ARGV[0]]
-    @couchdb_url = SETTINGS[:usage_tracker_couchdb]
+    @couchdb_url = SETTINGS[:usage_tracker][:couchdb]
     puts "using couchdb database:#{@couchdb_url}"
     ARGV.push @couchdb_url
     UsageTrackerSetup.init(@couchdb_url)
@@ -49,7 +49,7 @@ end
 EventMachine::run do
     #puts "debug: #{ARGV.inspect}"
     env = ARGV.length > 0 ? ARGV[0] : "development"
-    em_url = UsageWriter::SETTINGS[:usage_tracker_em]
+    em_url = UsageWriter::SETTINGS[:usage_tracker][:reactor]
     host = em_url.split(":")[0]
     port =  em_url.split(":")[1]
     EventMachine::start_server host, port, UsageWriter
