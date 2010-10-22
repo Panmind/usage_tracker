@@ -6,30 +6,36 @@ require 'json'
 
 module UsageTracker
   module Reactor
-    # this function is called upon every data reception
+    # This method is called upon every data reception
     #
     def receive_data(data)
-      d = eval data # FIXME SECURITY HOLE
-      d['_id'] = make_id
+      doc = parse(data)
+      store(doc) if doc
+    end
 
-      begin
+    private
+      def parse(data)
+        JSON(data).tap {|doc| doc['_id'] = make_id}
+      rescue JSON::ParserError
+        UsageTracker.log "Tossing out invalid JSON #{data.inspect} (#{$!.message})"
+      end
+
+      def store(doc)
         tries = 0
-        UsageTracker.database.save_doc(d)
+        UsageTracker.database.save_doc(doc)
 
       rescue RestClient::Conflict
         if (tries += 1) < 10
-          d['_id'] = make_rand_id
+          doc['_id'] = make_rand_id
           retry
         else
-          UsageTracker.log "Losing '#{d.inspect}' because of too many conflicts"
+          UsageTracker.log "Losing '#{doc.inspect}' because of too many conflicts"
         end
 
       rescue Encoding::UndefinedConversionError
         :ok # FIXME handle this error properly
       end
-    end
 
-    private
       # timestamp as _id has the advantage that documents
       # are sorted automatically by couchdb...
       #

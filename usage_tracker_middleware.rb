@@ -49,7 +49,7 @@ class UsageTrackerMiddleware
 			data_object[:duration] = duration
 			sr = UTProcessDict::get_search_result
 			data_object[:search_result] = sr if sr
-      sock.write(data_object)
+      sock.write(data_object.to_json)
       sock.close
     rescue Errno::ECONNREFUSED, Errno::EHOSTUNREACH
       :ok
