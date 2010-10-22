@@ -1,0 +1,122 @@
+_id     : '_design/basic'
+language: 'javascript'
+views   :
+  by_user_and_timestamp:
+    map : |
+      function (doc) {                                        
+        emit ([doc.user_id, doc._id], doc);                                                    
+      }
+
+  by_user_and_timestamp:
+    map : |
+      function (doc) {                                        
+        emit ([doc.user_id, doc._id], doc);                                                    
+      }
+
+  res_count: |
+    map: |
+      function(doc) {
+        if (doc.request_path.indexOf("res/") != -1){
+          emit(doc.request_path.split("/")[2], 1);
+        }
+      }
+    reduce: |
+      function(keys, values,rereduce) {
+        return sum(values);
+      }
+
+  res_item_count:
+    map: |
+      function(doc) {
+        if (doc.request_path.indexOf("res/") != -1 &  // FIXME
+          doc.request_path.split("/").length > 3) {
+          emit([doc.request_path.split("/")[2],doc.request_path.split("/")[3]], 1);
+        }
+    reduce: |
+      function(keys, values, rereduce) {
+         return sum(values);
+      }
+
+  user_res_count:
+    map: |
+      function(doc) {
+        if (doc.request_path.indexOf("res/") != -1) {
+          emit([doc.user_id, doc.request_path.split("/")[2]], 1);
+        }
+      }
+    reduce: |
+      function(keys, values,rereduce) {
+        return sum(values);
+      }
+
+  user_area_count:
+    map: |
+      function(doc) {
+        arr = ["",'inbox','res','projects','users','account','publish','search'] // FIXME
+        for (i=0;i<arr.length;i++){
+          if (doc.request_path.indexOf("/"+arr[i]+"/") != -1) {
+            area = (arr[i] != "" ? arr[i] : "homepage(/)") // FIXME
+          }
+        } 
+        emit([doc.user_id, area], 1);
+      }
+    reduce: |
+      function(keys, values,rereduce) {
+        return sum(values);
+      }
+
+  area_count:
+    map: |
+      function(doc) {
+        arr = ["",'inbox','res','projects','users','account','publish','search'] // DRY
+        for (i=0;i<arr.length;i++){
+          if (doc.request_path.indexOf("/"+arr[i]+"/") != -1) {
+            area = (arr[i] != "" ? arr[i] : "homepage(/)") // DRY & FIXME
+          } 
+        }
+        emit(area, 1);
+      }
+    reduce: |
+      function(keys, values, rereduce) {
+        return sum(values);
+      }
+
+  average_duration_of_path:
+    map: |
+      function(doc) {
+        if (doc.duration)
+          emit(doc.request_path, doc.duration);
+        }
+    reduce: |
+      function(keys,values){
+        return Math.round(sum(values) / values.length)
+      }
+
+  average_duration_of_area:
+    map: |
+      function(doc) {
+        arr = ["",'inbox','res','projects','users','account','publish','search'] // DRY DRY DRY
+        for (i=0;i<arr.length;i++) {
+          if (doc.request_path.indexOf("/"+arr[i]) != -1) {
+            area = (arr[i] != "" ? arr[i] : "homepage(/)")
+          }
+        }   
+        if (doc.duration)
+           emit(area, doc.duration);
+      }
+    reduce: |
+      function(keys,values){
+        return Math.round(sum(values) / values.length)
+      }
+
+  by_user_timestamp_area:
+    map: |
+      function(doc) {
+        arr = ["",'inbox','res','projects','users','account','publish','search']
+        for (i=0;i<arr.length;i++) {
+          if (doc.request_path.indexOf("/"+arr[i]) != -1) {
+            area = (arr[i] != "" ? arr[i] : "homepage(/)")
+          }
+        }
+        emit([doc.user_id, doc._id, area],doc)
+      }
