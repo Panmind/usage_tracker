@@ -49,24 +49,24 @@ module UsageTracker
       @database =
         CouchRest.database!(settings.couchdb).tap do |db|
           db.info
-          log "Connected to #{settings.couchdb}"
+          log "Connected to database #{settings.couchdb}"
         end
 
       load_views!
     rescue Errno::ECONNREFUSED
-      raise "Unable to connect to #{settings.couchdb}"
+      raise "Unable to connect to database #{settings.couchdb}"
     end
 
     def log(message)
       puts format(message)
     end
 
-    private
-      def raise(message)
-        log(message)
-        Kernel.raise format(message)
-      end
+    def raise(message)
+      log(message)
+      Kernel.raise Error, format(message)
+    end
 
+    private
       def format(message)
         "** UT: #{message}"
       end
@@ -93,4 +93,6 @@ module UsageTracker
         database.save_doc new
       end
   end
+
+  class Error < StandardError; end
 end
