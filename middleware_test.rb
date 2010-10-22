@@ -30,8 +30,9 @@ class UsageTrackerMiddlewareTest < ActionController::IntegrationTest
     context "a search request" do
       should "result in a db-entry containing search results" do
         doc =  db.get(db.get("_all_docs").rows.sort{|a,b| a["id"] <=> b["id"]}[-2]["id"])
+        #puts doc.inspect
         assert doc.keys.include?("search_result")
-        assert doc["search_result"]["user"].size > 0
+        assert doc["search_result"]["users"].size > 0
       end
     end
   end

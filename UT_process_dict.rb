@@ -12,13 +12,14 @@ class UTProcessDict
       res
    end
    private
-   ## takes only the ids of the elements, only for polymorph model <asset> the type is registered
+   # takes only the ids of the elements
+   # for the polymorph model <asset> also the type is registered
    def self.shape_data(data)
       data.each do |k,v|
         if k == :assets 
-          data[k] = v.map{|it| {:id => it.content_id,:type=>it.content_type}}
+          data[k] = v.map{|it| {:id => it.content_id,:type=>it.content_type}} if v
         else
-          data[k] = v.map{|it| it.id}
+          data[k] = v.map{|it| it.id} if v
         end
       end
       data
