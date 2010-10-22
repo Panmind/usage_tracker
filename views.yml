@@ -1,18 +1,15 @@
 <%
-  # Currently defined path prefixes
+  # Currently defined path prefixes, in JS Regexp format
   #
-  _AREAS    = [''].concat(%w( inbox res projects users account publish search ))
+  _AREAS_RE = '\/(' << %w( inbox res projects users account publish search ).join('|');
 
-  # Expands to a cycle that sets the "area" variable by
-  # comparing "doc.request_path" with each one of the
-  # defined path prefixes.
+  # Expands to JS code that defines the "area" variable by
+  # executing the _AREAS_RE regexp onto the "request_path"
+  # property of the "doc" object.
   #
   _GET_AREA = %(
-    var areas = #{_AREAS.to_json}, area;
-
-    for (i in areas)
-      if (doc.request_path.indexOf('/' + areas[i]) > 0)
-        area = areas[i] || 'homepage(/)';
+    var match = /#{_AREAS_RE}/.exec (doc.request_path);
+    var area  = match ? match[1] : 'homepage(/)';
   ).gsub(/\s+/x, ' ').strip
 %>
 
