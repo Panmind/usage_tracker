@@ -4,10 +4,6 @@ require 'ostruct'
 
 module UsageTracker
   class << self
-    def log(message)
-      puts "** UT: #{message}"
-    end
-
     # Memoizes the current environment
     def env
       @env ||= ENV['RAILS_ENV'] || ARGV[0] || 'development'
@@ -29,6 +25,10 @@ module UsageTracker
 
         unless settings
           raise ":usage_tracker configuration block not found in #{rc_file}"
+        end
+
+        if settings.values_at(:couchdb, :listen).any?(&:nil?)
+          raise "Incomplete configuration: please set the 'couchdb' and 'listen' keys"
         end
 
         OpenStruct.new settings
@@ -57,7 +57,20 @@ module UsageTracker
       raise "Unable to connect to #{settings.couchdb}"
     end
 
+    def log(message)
+      puts format(message)
+    end
+
     private
+      def raise(message)
+        log(message)
+        Kernel.raise format(message)
+      end
+
+      def format(message)
+        "** UT: #{message}"
+      end
+
       # Loads CouchDB views from views.yml and verifies that
       # they are loaded in the current instance, upgrading
       # them if necessary.
