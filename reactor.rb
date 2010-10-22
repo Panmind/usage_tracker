@@ -13,19 +13,33 @@ module UsageTracker
     #
     def receive_data(data)
       d = eval data # FIXME SECURITY HOLE
-      # timestamp as _id has the advantage that documents are sorted automatically by couchdb, 
-      # eventual duplication (multiple servers) of the id are avoided by adding a random string at the end 
+      d['_id'] = make_id
+
       begin
-        d["_id"] = Time.now.to_f.to_s.ljust(16,"0")
         UsageTracker.database.save_doc(d)
       rescue RestClient::Conflict
-        d["_id"] = Time.now.to_f.to_s.ljust(16,"0") + (0..9).to_a.rand.to_s
+        d['_id'] = make_rand_id
         retry
       rescue Encoding::UndefinedConversionError
         :ok # FIXME handle this error properly
       end
     end
 
+    private
+      # timestamp as _id has the advantage that documents
+      # are sorted automatically by couchdb...
+      #
+      def make_id
+        Time.now.to_f.to_s.ljust(16, '0')
+      end
+
+      # ...eventual duplication (multiple servers) of said
+      # id are avoided by adding a random digit at the end
+      #
+      def make_rand_id
+        make_id + rand(10).to_s
+      end
+  end
 end
 
 UsageTracker.connect!
