@@ -17,7 +17,15 @@ class UTProcessDict
    def self.shape_data(data)
       data.each do |k,v|
         if k == :assets 
-          data[k] = v.map{|it| {:id => it.content_id,:type=>it.content_type}} if v
+          if v
+            data[k] = v.map do |it| 
+              if it.class == NetworkAsset
+                {:id => it.content_id, :type=>it.content_type} 
+              else
+                {:id => it.id, :type => it.class.name} 
+              end
+            end
+          end  
         else
           data[k] = v.map{|it| it.id} if v
         end
