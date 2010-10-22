@@ -62,7 +62,10 @@ module UsageTracker
       # they are loaded in the current instance, upgrading
       # them if necessary.
       def load_views!
-        new = YAML.load ERB.new(File.read('extras/usage_tracker/views.yml')).result
+        new = YAML.load ERB.new(
+          Pathname.new(__FILE__).dirname.join('views.yml').read
+        ).result
+
         id  = new['_id']
         old = database.get id
 
