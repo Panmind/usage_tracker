@@ -40,12 +40,28 @@ module UsageTracker
         make_id + rand(10).to_s
       end
   end
-end
 
-UsageTracker.connect!
 
-EventMachine.run do
-  host, port = UsageTracker.settings.reactor.split(':')
-  EventMachine::start_server host, port, UsageTracker::Reactor
-  UsageTracker.log "Started Reactor on #{host}:#{port}"
+  connect!
+
+  EventMachine.run do
+    begin
+      host, port = UsageTracker.settings.listen.split(':')
+
+      if [host, port].any? {|x| x.strip.empty?}
+        raise "Please specify where to listen as host:port"
+      end
+
+      unless (1024..65535).include? port.to_i
+        raise "Please set a listening port higher between 1024 and 65535"
+      end
+
+      EventMachine.start_server host, port, Reactor
+      log "Started Reactor on #{host}:#{port}"
+    rescue RuntimeError => e
+      raise(
+        e.message == 'no acceptor' ? "Unable to bind to #{host}:#{port}" : e.message
+      )
+    end
+  end
 end
