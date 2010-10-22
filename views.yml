@@ -28,7 +28,7 @@ views   :
   res_item_count:
     map: |
       function(doc) {
-        if (doc.request_path.indexOf("res/") != -1 &  // FIXME
+        if (doc.request_path.indexOf("res/") != -1 &&
           doc.request_path.split("/").length > 3) {
           emit([doc.request_path.split("/")[2],doc.request_path.split("/")[3]], 1);
         }
