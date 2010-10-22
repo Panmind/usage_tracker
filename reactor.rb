@@ -13,10 +13,17 @@ module UsageTracker
       d['_id'] = make_id
 
       begin
+        tries = 0
         UsageTracker.database.save_doc(d)
+
       rescue RestClient::Conflict
-        d['_id'] = make_rand_id
-        retry
+        if (tries += 1) < 10
+          d['_id'] = make_rand_id
+          retry
+        else
+          UsageTracker.log "Losing '#{d.inspect}' because of too many conflicts"
+        end
+
       rescue Encoding::UndefinedConversionError
         :ok # FIXME handle this error properly
       end
@@ -37,7 +44,6 @@ module UsageTracker
         make_id + rand(10).to_s
       end
   end
-
 
   connect!
 
