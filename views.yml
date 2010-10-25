@@ -15,7 +15,7 @@
 
 _id     : '_design/basic'
 language: 'javascript'
-version : '2010102502' # Format: YYYY MM DD VV
+version : '2010102503' # Format: YYYY MM DD VV
 views   :
   by_user_and_timestamp:
     map : |
@@ -26,15 +26,15 @@ views   :
   by_user_and_timestamp:
     map : |
       function (doc) {                                        
-        emit ([doc.user_id, doc._id], doc);                                                    
+        if (doc.env)
+          emit ([doc.user_id, doc._id], doc);
       }
 
   res_count: |
     map: |
       function(doc) {
-        if (doc.request_path.indexOf('res/') > 0) {
+        if (doc.env && doc.env.request_path.indexOf("res/") > 0)
           emit (doc.env.request_path.split("/")[2], 1);
-        }
       }
     reduce: |
       function(keys, values, rereduce) {
@@ -44,7 +44,7 @@ views   :
   res_item_count:
     map: |
       function(doc) {
-        if (doc.request_path.indexOf('res/') > 0) {
+        if (doc.env && doc.env.request_path.indexOf('res/') > 0) {
           var pieces = doc.env.request_path.split('/')
           if (pieces.length > 3)
             emit([pieces[2], pieces[3]], 1)
@@ -57,9 +57,8 @@ views   :
   user_res_count:
     map: |
       function(doc) {
-        if (doc.request_path.indexOf('res/') != -1) {
+        if (doc.env && doc.env.request_path.indexOf('res/') != -1)
           emit([doc.user_id, doc.env.request_path.split('/')[2]], 1);
-        }
       }
     reduce: |
       function(keys, values, rereduce) {
@@ -69,8 +68,10 @@ views   :
   user_area_count:
     map: |
       function(doc) {
-        <%= _GET_AREA %>
-        emit([doc.user_id, area], 1);
+        if (doc.env) {
+          <%= _GET_AREA %>
+          emit([doc.user_id, area], 1);
+        }
       }
     reduce: |
       function(keys, values, rereduce) {
@@ -80,8 +81,10 @@ views   :
   area_count:
     map: |
       function(doc) {
-        <%= _GET_AREA %>
-        emit(area, 1);
+        if (doc.env) {
+          <%= _GET_AREA %>
+          emit(area, 1);
+        }
       }
     reduce: |
       function(keys, values, rereduce) {
@@ -115,6 +118,8 @@ views   :
   by_user_timestamp_area:
     map: |
       function(doc) {
-        <%= _GET_AREA %>
-        emit([doc.user_id, doc._id, area], doc)
+        if (doc.env) {
+          <%= _GET_AREA %>
+          emit([doc.user_id, doc._id, area], doc)
+        }
       }
