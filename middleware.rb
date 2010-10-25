@@ -12,7 +12,7 @@ class UsageTracker::Middleware
   Save = [
     "REMOTE_ADDR",
     "REQUEST_METHOD",
-    "REQUEST_PATH",
+    #"REQUEST_PATH",
     "PATH_INFO",
     "REQUEST_URI",
     "SERVER_PROTOCOL",

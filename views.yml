@@ -4,18 +4,18 @@
   _AREAS_RE = '\/(' << %w( inbox res projects users account publish search ).join('|') << ')'
 
   # Expands to JS code that defines the "area" variable by
-  # executing the _AREAS_RE regexp onto the "request_path"
+  # executing the _AREAS_RE regexp onto the "request_uri"
   # property of the "doc" object.
   #
   _GET_AREA = %(
-    var match = /#{_AREAS_RE}/.exec (doc.env.request_path);
+    var match = /#{_AREAS_RE}/.exec (doc.env.request_uri);
     var area  = match ? match[1] : 'homepage(/)';
   ).gsub(/\s+/x, ' ').strip
 %>
 
 _id     : '_design/basic'
 language: 'javascript'
-version : '2010102504' # Format: YYYY MM DD VV
+version : '2010102505' # Format: YYYY MM DD VV
 views   :
   by_timestamp:
     map: |
@@ -34,8 +34,8 @@ views   :
   res_count:
     map: |
       function (doc) {
-        if (doc.env && doc.env.request_path.indexOf ("res/") > 0)
-          emit (doc.env.request_path.split ("/")[2], 1);
+        if (doc.env && doc.env.request_uri.indexOf ("res/") > 0)
+          emit (doc.env.request_uri.split ("/")[2], 1);
       }
     reduce: |
       function (keys, values, rereduce) {
@@ -45,8 +45,8 @@ views   :
   res_item_count:
     map: |
       function (doc) {
-        if (doc.env && doc.env.request_path.indexOf ('res/') > 0) {
-          var pieces = doc.env.request_path.split ('/');
+        if (doc.env && doc.env.request_uri.indexOf ('res/') > 0) {
+          var pieces = doc.env.request_uri.split ('/');
           if (pieces.length > 3)
             emit ([pieces[2], pieces[3]], 1);
         }
@@ -59,8 +59,8 @@ views   :
   user_res_count:
     map: |
       function (doc) {
-        if (doc.env && doc.env.request_path.indexOf ('res/') != -1)
-          emit ([doc.user_id, doc.env.request_path.split ('/')[2]], 1);
+        if (doc.env && doc.env.request_uri.indexOf ('res/') != -1)
+          emit ([doc.user_id, doc.env.request_uri.split ('/')[2]], 1);
       }
     reduce: |
       function (keys, values, rereduce) {
@@ -97,7 +97,7 @@ views   :
     map: |
       function (doc) {
         if (doc.duration)
-          emit (doc.env.request_path, doc.duration);
+          emit (doc.env.request_uri, doc.duration);
       }
     reduce: |
       function (keys, values){
