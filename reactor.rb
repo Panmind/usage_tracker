@@ -53,6 +53,8 @@ module UsageTracker
 
   connect!
 
+  trap('USR1') { log 'Rotating log'; closelog }
+
   EventMachine.run do
     begin
       host, port = UsageTracker.settings.listen.split(':')
@@ -67,6 +69,7 @@ module UsageTracker
 
       EventMachine.open_datagram_socket host, port, Reactor
       log "Started Reactor on #{host}:#{port}"
+
     rescue RuntimeError => e
       raise(
         e.message == 'no acceptor' ? "Unable to bind to #{host}:#{port}" : e.message

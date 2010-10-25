@@ -4,6 +4,7 @@ require 'yaml'
 require 'pathname'
 require 'ostruct'
 require 'couchrest'
+require 'logger'
 
 module UsageTracker
   class << self
@@ -61,6 +62,12 @@ module UsageTracker
     end
 
     def log(message)
+      @log ||= begin
+        path = Pathname.new(__FILE__).dirname.join('..', '..', 'log', 'usage_tracker.log')
+        Logger.new(path.to_s).tap {|l| l.info 'Log opened'}
+      end
+
+      @log.info format(message)
       $stderr.puts format(message)
     end
 
@@ -72,6 +79,11 @@ module UsageTracker
     private
       def format(message)
         "** UT: #{message}"
+      end
+
+      def closelog
+        @log.close
+        @log = nil
       end
 
       # Loads CouchDB views from views.yml and verifies that
