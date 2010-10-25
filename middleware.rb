@@ -47,7 +47,8 @@ class Middleware
         :user_id  => env['rack.session'][:user_id],
         :duration => ((req_end - req_start) * 1000).to_i,
         :context  => Context.get,
-        :env      => {}
+        :env      => {},
+        :status   => response[0] # response contains [status, headers, body]
       }
 
       Save.each {|key| data[:env][key.downcase] = env[key] unless env[key].blank?}

@@ -13,12 +13,70 @@ module UsageTracker
   class IntegrationTest < ActionController::IntegrationTest   
     UsageTracker.connect!
 
-    context "a request" do
-      should "get tracked in the db backend (couch)" do
+    context 'a request from a guest' do
+      should 'get tracked when successful' do
         assert_difference 'UsageTracker.database.info["doc_count"]' do
           get '/'
           assert_response :success
         end
+
+        doc = last_tracking
+        assert_equal '/', doc.env.request_uri
+        assert_equal nil, doc.user_id
+        assert_equal 200, doc.status
+        assert doc.duration > 0
+      end
+
+      should 'get tracked when not found' do
+        get '/nonexistant'
+        assert_response :not_found
+
+        doc = last_tracking
+        assert_equal '/nonexistant', doc.env.request_uri
+        assert_equal 404,            doc.status
+      end
+    end
+
+    context 'a request from a logged-in user' do
+      setup do
+        @user = Factory.create(:confirmed_user)
+        post '/login', {:email => @user.email, :password => @user.password}, {'HTTPS' => 'on'}
+        assert_redirected_to plain_root_url
+      end
+
+      should 'get tracked when successful' do
+        assert_difference 'UsageTracker.database.info["doc_count"]' do
+          get '/_'
+          assert_response :success
+        end
+
+        doc = last_tracking
+
+        assert_equal '/_',     doc.env.request_uri
+        assert_equal @user.id, doc.user_id
+        assert_equal 200,      doc.status
+      end
+
+      should 'get tracked when not found' do
+        get '/nonexistant'
+        assert_response :not_found
+
+        doc = last_tracking
+
+        assert_equal '/nonexistant', doc.env.request_uri
+        assert_equal @user.id,       doc.user_id
+        assert_equal 404,            doc.status
+      end
+
+      should 'get tracked when failed' do
+        xhr :get, '/projects/1/error', {}, {'HTTPS' => 'on'}
+        assert_response :internal_server_error
+
+        doc = last_tracking
+
+        assert_equal '/projects/1/error', doc.env.request_uri
+        assert_equal @user.id,            doc.user_id
+        assert_equal 500,                 doc.status
       end
     end
 
