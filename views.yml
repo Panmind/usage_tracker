@@ -1,7 +1,7 @@
 <%
   # Currently defined path prefixes, in JS Regexp format
   #
-  _AREAS_RE = '\/(' << %w( inbox res projects users account publish search ).join('|');
+  _AREAS_RE = '\/(' << %w( inbox res projects users account publish search ).join('|') << ')'
 
   # Expands to JS code that defines the "area" variable by
   # executing the _AREAS_RE regexp onto the "request_path"
@@ -20,17 +20,11 @@ views   :
   by_user_and_timestamp:
     map : |
       function (doc) {                                        
-        emit ([doc.user_id, doc._id], doc);                                                    
-      }
-
-  by_user_and_timestamp:
-    map : |
-      function (doc) {                                        
         if (doc.env)
           emit ([doc.user_id, doc._id], doc);
       }
 
-  res_count: |
+  res_count:
     map: |
       function(doc) {
         if (doc.env && doc.env.request_path.indexOf("res/") > 0)
@@ -49,6 +43,7 @@ views   :
           if (pieces.length > 3)
             emit([pieces[2], pieces[3]], 1)
         }
+      }
     reduce: |
       function(keys, values, rereduce) {
          return sum(values);
@@ -96,7 +91,7 @@ views   :
       function(doc) {
         if (doc.duration)
           emit (doc.env.request_path, doc.duration);
-        }
+      }
     reduce: |
       function(keys, values){
         return Math.round(sum(values) / values.length)
