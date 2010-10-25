@@ -49,7 +49,7 @@ class UsageTracker::Middleware
         :env      => {}
       }
 
-      Save.each {|key| data[:env][key] = env[key]}
+      Save.each {|key| data[:env][key.downcase] = env[key] unless env[key].blank?}
 
       self.class.track(data.to_json)
 
