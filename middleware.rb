@@ -66,8 +66,7 @@ class Middleware
 
   class << self
     # Adds the UsageTracker::Middleware to the middleware stack,
-    # if configuration is there and the connection to the daemon
-    # can be established.
+    # if configuration is present.
     #
     def insert
       return unless enabled?
