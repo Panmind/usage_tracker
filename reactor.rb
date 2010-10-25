@@ -33,7 +33,7 @@ module UsageTracker
         end
 
       rescue Encoding::UndefinedConversionError
-        :ok # FIXME handle this error properly
+        UsageTracker.log "Losing '#{doc.inspect}' because #$!" # FIXME handle this error properly
       end
 
       # timestamp as _id has the advantage that documents
