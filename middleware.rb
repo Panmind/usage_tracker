@@ -1,4 +1,3 @@
-require 'kgio'
 require 'timeout'
 require 'extras/usage_tracker/context'
 
@@ -77,20 +76,18 @@ module UsageTracker
         log 'inserted before Rack::Head'
       end
 
-      # Tries to connect to the server and write the given `data`,
-      # with a 1 second timeout.
-      #
-      # If a connect or write error occurs, data is lost.
+      # Writes the given `data` to the reactor, using the UDP protocol.
+      # Times out after 1 second. If a write error occurs, data is lost.
       #
       def track(data)
         Timeout.timeout(1) do
-          Kgio::TCPSocket.open(Host, Port.to_i) do |sock|
-            sock.kgio_write(data << "\n")
+          UDPSocket.open do |sock|
+            sock.connect(Host, Port.to_i)
+            sock.write_nonblock(data << "\n")
           end
         end
 
-      rescue IOError, Errno::EPIPE, Errno::ECONNRESET,
-        Errno::ECONNREFUSED, Errno::EHOSTUNREACH, Timeout::Error
+      rescue Timeout::Error, Errno::EWOULDBLOCK, Errno::EAGAIN, Errno::EINTR
         log "Cannot track data: #{$!.message}"
       end
 

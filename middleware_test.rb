@@ -162,10 +162,9 @@ module UsageTracker
 
     context "the middleware" do
       should "not wait for more than a second before aborting" do
-        Kgio::TCPSocket.expects(:open).once.yields(Class.new do
-          def kgio_write(*args)
-            sleep 2
-          end
+        UDPSocket.expects(:open).once.yields(Class.new do
+          def write_nonblock(*args); sleep 0.7 end
+          def connect(*args)       ; sleep 0.7 end
         end.new)
 
         assert_no_difference 'doc_count' do

@@ -65,7 +65,7 @@ module UsageTracker
         raise "Please set a listening port between 1024 and 65535"
       end
 
-      EventMachine.start_server host, port, Reactor
+      EventMachine.open_datagram_socket host, port, Reactor
       log "Started Reactor on #{host}:#{port}"
     rescue RuntimeError => e
       raise(
