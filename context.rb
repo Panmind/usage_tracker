@@ -5,7 +5,9 @@ module UsageTracker
 
     def set(data)
       unless Thread.current[Key].blank?
-        UsageTracker::Middleware.log "WARNING: overwriting context data!"
+        unless Rails.env.test? && !caller.grep(/test\/functional/).blank?
+          Middleware.log 'WARNING: overwriting context data!'
+        end
       end
 
       Thread.current[Key] = data
