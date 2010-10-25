@@ -5,7 +5,7 @@ module UsageTracker
 
     def set(data)
       unless Thread.current[Key].blank?
-        UsageTracker.log "WARNING: overwriting context data!"
+        UsageTracker::Middleware.log "WARNING: overwriting context data!"
       end
 
       Thread.current[Key] = data
