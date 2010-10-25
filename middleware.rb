@@ -1,11 +1,12 @@
 require 'kgio'
 require 'timeout'
-require 'extras/usage_tracker/UT_process_dict'
+require 'extras/usage_tracker/context'
 
 # This middleware sends the incoming request-object to a specified socket,
 # writing them to a socket where it can be picked up and parsed for storage
 #
-class UsageTracker::Middleware
+module UsageTracker
+class Middleware
   Config     = APPLICATION_CONFIG[:usage_tracker]
   Host, Port = Config[:listen].split(':').each(&:freeze) rescue nil
 
@@ -45,7 +46,7 @@ class UsageTracker::Middleware
       data = {
         :user_id  => env['rack.session'][:user_id],
         :duration => ((req_end - req_start) * 1000).to_i,
-        :context  => UTProcessDict.get_search_result,
+        :context  => Context.get,
         :env      => {}
       }
 
@@ -99,4 +100,5 @@ class UsageTracker::Middleware
       $stderr.puts "** #{message}"
     end
   end
+end
 end
