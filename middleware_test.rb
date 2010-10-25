@@ -10,12 +10,12 @@
 require 'extras/usage_tracker/initializer'
 
 module UsageTracker
-  class IntegrationTest < ActionController::IntegrationTest   
+  class IntegrationTest < ActionController::IntegrationTest
     UsageTracker.connect!
 
     context 'a request from a guest' do
       should 'get tracked when successful' do
-        assert_difference 'UsageTracker.database.info["doc_count"]' do
+        assert_difference 'doc_count' do
           get '/'
           assert_response :success
         end
@@ -45,7 +45,7 @@ module UsageTracker
       end
 
       should 'get tracked when successful' do
-        assert_difference 'UsageTracker.database.info["doc_count"]' do
+        assert_difference 'doc_count' do
           get '/_'
           assert_response :success
         end
@@ -160,8 +160,29 @@ module UsageTracker
       end
     end
 
+    context "the middleware" do
+      should "not wait for more than a second before aborting" do
+        Kgio::TCPSocket.expects(:open).once.yields(Class.new do
+          def kgio_write(*args)
+            sleep 2
+          end
+        end.new)
+
+        assert_no_difference 'doc_count' do
+          get '/_'
+          assert_response :success
+        end
+      end
+    end
+
     def last_tracking
+      sleep 0.3
       UsageTracker.database.view('basic/by_timestamp', :descending => true, :limit => 1).rows.first.value
+    end
+
+    def doc_count
+      sleep 0.3
+      UsageTracker.database.info['doc_count']
     end
   end
 end
