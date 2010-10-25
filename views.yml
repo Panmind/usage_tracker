@@ -21,11 +21,11 @@ views   :
     map: |
       function (doc) {
         if (doc.env)
-          emit (doc._id, doc)
+          emit (doc._id, doc);
       }
 
   by_user_and_timestamp:
-    map : |
+    map: |
       function (doc) {                                        
         if (doc.env)
           emit ([doc.user_id, doc._id], doc);
@@ -33,95 +33,95 @@ views   :
 
   res_count:
     map: |
-      function(doc) {
-        if (doc.env && doc.env.request_path.indexOf("res/") > 0)
-          emit (doc.env.request_path.split("/")[2], 1);
+      function (doc) {
+        if (doc.env && doc.env.request_path.indexOf ("res/") > 0)
+          emit (doc.env.request_path.split ("/")[2], 1);
       }
     reduce: |
-      function(keys, values, rereduce) {
-        return sum(values);
+      function (keys, values, rereduce) {
+        return sum (values);
       }
 
   res_item_count:
     map: |
-      function(doc) {
-        if (doc.env && doc.env.request_path.indexOf('res/') > 0) {
-          var pieces = doc.env.request_path.split('/')
+      function (doc) {
+        if (doc.env && doc.env.request_path.indexOf ('res/') > 0) {
+          var pieces = doc.env.request_path.split ('/');
           if (pieces.length > 3)
-            emit([pieces[2], pieces[3]], 1)
+            emit ([pieces[2], pieces[3]], 1);
         }
       }
     reduce: |
-      function(keys, values, rereduce) {
-         return sum(values);
+      function (keys, values, rereduce) {
+         return sum (values);
       }
 
   user_res_count:
     map: |
-      function(doc) {
-        if (doc.env && doc.env.request_path.indexOf('res/') != -1)
-          emit([doc.user_id, doc.env.request_path.split('/')[2]], 1);
+      function (doc) {
+        if (doc.env && doc.env.request_path.indexOf ('res/') != -1)
+          emit ([doc.user_id, doc.env.request_path.split ('/')[2]], 1);
       }
     reduce: |
-      function(keys, values, rereduce) {
-        return sum(values);
+      function (keys, values, rereduce) {
+        return sum (values);
       }
 
   user_area_count:
     map: |
-      function(doc) {
+      function (doc) {
         if (doc.env) {
           <%= _GET_AREA %>
-          emit([doc.user_id, area], 1);
+          emit ([doc.user_id, area], 1);
         }
       }
     reduce: |
-      function(keys, values, rereduce) {
-        return sum(values);
+      function (keys, values, rereduce) {
+        return sum (values);
       }
 
   area_count:
     map: |
-      function(doc) {
+      function (doc) {
         if (doc.env) {
           <%= _GET_AREA %>
-          emit(area, 1);
+          emit (area, 1);
         }
       }
     reduce: |
-      function(keys, values, rereduce) {
-        return sum(values);
+      function (keys, values, rereduce) {
+        return sum (values);
       }
 
   average_duration_of_path:
     map: |
-      function(doc) {
+      function (doc) {
         if (doc.duration)
           emit (doc.env.request_path, doc.duration);
       }
     reduce: |
-      function(keys, values){
-        return Math.round(sum(values) / values.length)
+      function (keys, values){
+        return Math.round (sum (values) / values.length);
       }
 
   average_duration_of_area:
     map: |
-      function(doc) {
+      function (doc) {
         if (doc.duration) {
           <%= _GET_AREA %>
-          emit(area, doc.duration);
+          emit (area, doc.duration)
         }
       }
     reduce: |
-      function(keys, values){
-        return Math.round(sum(values) / values.length)
+      function (keys, values){
+        return Math.round (sum (values) / values.length);
       }
 
   by_user_timestamp_area:
     map: |
-      function(doc) {
+      function (doc) {
         if (doc.env) {
           <%= _GET_AREA %>
-          emit([doc.user_id, doc._id, area], doc)
+          emit ([doc.user_id, doc._id, area], doc);
         }
       }
