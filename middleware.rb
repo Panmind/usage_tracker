@@ -57,6 +57,7 @@ class Middleware
 
     rescue
       self.class.log($!.message)
+      self.class.log($!.backtrace.join("\n"))
     end
 
   ensure
