@@ -1,11 +1,11 @@
-require 'socket'
+require 'kgio'
 require 'timeout'
 require 'extras/usage_tracker/UT_process_dict'
 
 # This middleware sends the incoming request-object to a specified socket,
 # writing them to a socket where it can be picked up and parsed for storage
 #
-class UsageTrackerMiddleware
+class UsageTracker::Middleware
   Config     = APPLICATION_CONFIG[:usage_tracker]
   Host, Port = Config[:listen].split(':').each(&:freeze) rescue nil
 
@@ -55,65 +55,48 @@ class UsageTrackerMiddleware
 
     rescue
       self.class.log($!.message)
-
     end
 
   ensure
     return response
   end
 
-  cattr_reader :sock
   class << self
-    # Adds the UsageTrackerMiddleware to the middleware stack,
+    # Adds the UsageTracker::Middleware to the middleware stack,
     # if configuration is there and the connection to the daemon
     # can be established.
     #
     def insert
-      unless Config
-        log 'disabled, because configuration is missing'
-        return
-      end
-
-      unless connect
-        log 'disabled, because connection could not be established'
-        return
-      end
-
+      return unless enabled?
       ActionController::Dispatcher.middleware.insert_before(Rack::Head, self)
-      log 'Inserted before Rack::Head'
+      log 'inserted before Rack::Head'
     end
 
-    def connect
-      @@sock = Timeout.timeout(1) { TCPSocket.open(Host, Port) }
-      log "Connected to daemon on #{Host}:#{Port}"
-      return true
-
-    rescue Errno::ECONNREFUSED, Errno::EHOSTUNREACH
-      log "cannot connect to daemon on #{Host}:#{Port}"
-    rescue Timeout::Error
-      log "timed out while connecting to #{Host}:#{Port}"
-    end
-
+    # Tries to connect to the server and write the given `data`,
+    # with a 1 second timeout.
+    #
+    # If a connect or write error occurs, data is lost.
+    #
     def track(data)
-      debugger
-      return unless sock
-
-      tried = false
-      begin
-        sock.write(data)
-      rescue IOError
-        return nil if tried
-        tried = true
-        connect
-        retry
+      Timeout.timeout(1) do
+        Kgio::TCPSocket.open(Host, Port.to_i) do |sock|
+          sock.kgio_write(data << "\n")
+        end
       end
+
+    rescue IOError, Errno::EPIPE, Errno::ECONNRESET,
+      Errno::ECONNREFUSED, Errno::EHOSTUNREACH, Timeout::Error
+      log "Cannot track data: #{$!.message}"
+    end
+
+    def enabled?
+      !Config.nil?
     end
 
     def log(message)
       message = "Usage Tracker: #{message}"
-      $stderr.puts "** #{message}"
       Rails.logger.error message
-      nil
+      $stderr.puts "** #{message}"
     end
   end
 end

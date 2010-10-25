@@ -1,3 +1,4 @@
-# See app/middleware/usage_tracker_middleware.rb
+# See extras/usage_tracker/middleware.rb
+require 'extras/usage_tracker/middleware'
 
-UsageTrackerMiddleware.insert
+UsageTracker::Middleware.insert
