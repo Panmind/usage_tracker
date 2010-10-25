@@ -10,30 +10,28 @@
 # ##############################################################
 
 require File.dirname(__FILE__) + '/../test_helper'
-require 'couchrest'
+require 'extras/usage_tracker/initializer'
 
 # this checks the end-point of the usage tracking (arrival in the database) ->
 # consider checking intermediate steps.......
 class UsageTrackerMiddlewareTest < ActionController::IntegrationTest   
-  if APPLICATION_CONFIG[:test_usage_tracking]
-    db = CouchRest.database!(APPLICATION_CONFIG[:usage_tracker_couchdb])
-    context "a request" do
-      old_count = db.info["doc_count"]
-      should "get tracked in the db backend (couch)" do
-        #get '/_search#do_not_care_but_need_identifier'
-        get '/search/e'
-        new_count = db.info["doc_count"]
+  UsageTracker.connect!
+  db = UsageTracker.database
+
+  context "a request" do
+    should "get tracked in the db backend (couch)" do
+      assert_difference 'db.info["doc_count"]' do
+        get '/'
         assert_response :success
-        assert_not_equal old_count,new_count
       end
     end
-    context "a search request" do
-      should "result in a db-entry containing search results" do
-        doc =  db.get(db.get("_all_docs").rows.sort{|a,b| a["id"] <=> b["id"]}[-2]["id"])
-        #puts doc.inspect
-        assert doc.keys.include?("search_result")
-        assert doc["search_result"]["users"].size > 0
-      end
+
+    should "result in a db-entry containing search results" do
+      get '/search/e'
+      assert_response :success
+      doc = db.view('basic/by_timestamp', :descending => true, :limit => 1).rows.first.value
+      assert !doc.context.blank?
+      assert doc.context.users.size > 0
     end
   end
 end

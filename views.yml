@@ -15,8 +15,15 @@
 
 _id     : '_design/basic'
 language: 'javascript'
-version : '2010102503' # Format: YYYY MM DD VV
+version : '2010102504' # Format: YYYY MM DD VV
 views   :
+  by_timestamp:
+    map: |
+      function (doc) {
+        if (doc.env)
+          emit (doc._id, doc)
+      }
+
   by_user_and_timestamp:
     map : |
       function (doc) {                                        
