@@ -8,14 +8,14 @@
   # property of the "doc" object.
   #
   _GET_AREA = %(
-    var match = /#{_AREAS_RE}/.exec (doc.request_path);
+    var match = /#{_AREAS_RE}/.exec (doc.env.request_path);
     var area  = match ? match[1] : 'homepage(/)';
   ).gsub(/\s+/x, ' ').strip
 %>
 
 _id     : '_design/basic'
 language: 'javascript'
-version : '2010102201' # Format: YYYY MM DD VV
+version : '2010102502' # Format: YYYY MM DD VV
 views   :
   by_user_and_timestamp:
     map : |
@@ -33,7 +33,7 @@ views   :
     map: |
       function(doc) {
         if (doc.request_path.indexOf('res/') > 0) {
-          emit(doc.request_path.split("/")[2], 1);
+          emit (doc.env.request_path.split("/")[2], 1);
         }
       }
     reduce: |
@@ -45,7 +45,7 @@ views   :
     map: |
       function(doc) {
         if (doc.request_path.indexOf('res/') > 0) {
-          var pieces = doc.request_path.split('/')
+          var pieces = doc.env.request_path.split('/')
           if (pieces.length > 3)
             emit([pieces[2], pieces[3]], 1)
         }
@@ -58,7 +58,7 @@ views   :
     map: |
       function(doc) {
         if (doc.request_path.indexOf('res/') != -1) {
-          emit([doc.user_id, doc.request_path.split('/')[2]], 1);
+          emit([doc.user_id, doc.env.request_path.split('/')[2]], 1);
         }
       }
     reduce: |
@@ -92,7 +92,7 @@ views   :
     map: |
       function(doc) {
         if (doc.duration)
-          emit(doc.request_path, doc.duration);
+          emit (doc.env.request_path, doc.duration);
         }
     reduce: |
       function(keys, values){

@@ -46,10 +46,10 @@ class UsageTracker::Middleware
         :user_id  => env['rack.session'][:user_id],
         :duration => ((req_end - req_start) * 1000).to_i,
         :context  => UTProcessDict.get_search_result,
-        :environ  => {}
+        :env      => {}
       }
 
-      Save.each {|key| data[:environ][key] = env[key]}
+      Save.each {|key| data[:env][key] = env[key]}
 
       self.class.track(data.to_json)
 
