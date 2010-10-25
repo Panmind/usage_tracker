@@ -62,7 +62,7 @@ module UsageTracker
       end
 
       unless (1024..65535).include? port.to_i
-        raise "Please set a listening port higher between 1024 and 65535"
+        raise "Please set a listening port between 1024 and 65535"
       end
 
       EventMachine.start_server host, port, Reactor
