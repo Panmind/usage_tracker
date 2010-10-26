@@ -67,6 +67,8 @@ module UsageTracker
   trap('TERM') { sigexit 'TERM' }
   trap('USR1') { log.rotate  }
 
+  # Run the Event Loop
+  #
   EventMachine.run do
     begin
       host, port = UsageTracker.settings.listen.split(':')
@@ -80,7 +82,10 @@ module UsageTracker
       end
 
       EventMachine.open_datagram_socket host, port, Reactor
-      log "Started Reactor on #{host}:#{port}"
+      log "Listening on #{host}:#{port} UDP"
+
+      $stderr.puts "Started, logging to #{log.path}"
+      [$stdin, $stdout, $stderr].each {|io| io.reopen '/dev/null'}
 
     rescue RuntimeError => e
       raise(
