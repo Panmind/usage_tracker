@@ -17,7 +17,7 @@ module UsageTracker
       def parse(data)
         JSON(data).tap {|doc| doc['_id'] = make_id}
       rescue JSON::ParserError
-        UsageTracker.log "Tossing out invalid JSON #{data.inspect} (#{$!.message})"
+        UsageTracker.log.error "Tossing out invalid JSON #{data.inspect} (#{$!.message})"
       end
 
       def store(doc)
@@ -29,11 +29,11 @@ module UsageTracker
           doc['_id'] = make_rand_id
           retry
         else
-          UsageTracker.log "Losing '#{doc.inspect}' because of too many conflicts"
+          UsageTracker.log.error "Losing '#{doc.inspect}' because of too many conflicts"
         end
 
       rescue Encoding::UndefinedConversionError
-        UsageTracker.log "Losing '#{doc.inspect}' because #$!" # FIXME handle this error properly
+        UsageTracker.log.error "Losing '#{doc.inspect}' because #$!" # FIXME handle this error properly
       end
 
       # timestamp as _id has the advantage that documents
