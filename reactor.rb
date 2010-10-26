@@ -62,28 +62,24 @@ module UsageTracker
         rescue RestClient::Conflict => e
           if (tries += 1) < 10
             UsageTracker.log.warn "Retrying to save #{doc.inspect}, try #{tries}"
-            doc['_id'] = make_rand_id
             retry
           else
             UsageTracker.log.error "Losing '#{doc.inspect}' because of too many conflicts"
           end
+
         rescue Encoding::UndefinedConversionError
           UsageTracker.log.error "Losing '#{doc.inspect}' because #$!" # FIXME handle this error properly
         end
       end
 
-      # timestamp as _id has the advantage that documents
-      # are sorted automatically by couchdb...
+      # Timestamp as _id has the advantage that documents
+      # are sorted automatically by CouchDB.
+      #
+      # Eventual duplication (multiple servers) is (possibly)
+      # avoided by adding a random digit at the end.
       #
       def make_id
-        Time.now.to_f.to_s.ljust(16, '0')
-      end
-
-      # ...eventual duplication (multiple servers) of said
-      # id are avoided by adding a random digit at the end
-      #
-      def make_rand_id
-        make_id + rand(10).to_s
+        Time.now.to_f.to_s.ljust(16, '0') + rand(10).to_s
       end
   end
 
