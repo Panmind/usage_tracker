@@ -12,8 +12,7 @@ module UsageTracker
     Save = [
       "REMOTE_ADDR",
       "REQUEST_METHOD",
-      "REQUEST_PATH",
-      #"PATH_INFO",
+      "PATH_INFO",
       "REQUEST_URI",
       "SERVER_PROTOCOL",
       #"HTTP_VERSION",
