@@ -53,7 +53,7 @@ module UsageTracker
 
   connect!
 
-  trap('USR1') { log 'Rotating log'; closelog }
+  trap('USR1') { log.rotate  }
 
   EventMachine.run do
     begin

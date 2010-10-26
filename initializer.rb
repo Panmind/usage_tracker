@@ -4,7 +4,7 @@ require 'yaml'
 require 'pathname'
 require 'ostruct'
 require 'couchrest'
-require 'logger'
+require 'extras/usage_tracker/log'
 
 module UsageTracker
   class << self
@@ -61,31 +61,17 @@ module UsageTracker
       raise "Unable to connect to database #{settings.couchdb}"
     end
 
-    def log(message)
-      @log ||= begin
-        path = Pathname.new(__FILE__).dirname.join('..', '..', 'log', 'usage_tracker.log')
-        Logger.new(path.to_s).tap {|l| l.info 'Log opened'}
-      end
-
-      @log.info format(message)
-      $stderr.puts format(message)
+    def log(message = nil)
+      @log ||= Log.new
+      message ? @log.info(message) : @log
     end
 
     def raise(message)
-      log(message)
-      Kernel.raise Error, format(message)
+      log.error message
+      Kernel.raise Error, message
     end
 
     private
-      def format(message)
-        "** UT: #{message}"
-      end
-
-      def closelog
-        @log.close
-        @log = nil
-      end
-
       # Loads CouchDB views from views.yml and verifies that
       # they are loaded in the current instance, upgrading
       # them if necessary.
