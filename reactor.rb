@@ -26,9 +26,9 @@ module UsageTracker
 
     private
       def parse(data)
-        JSON(data).tap {|doc| doc['_id'] = make_id}
+        JSON(data)
       rescue JSON::ParserError
-        UsageTracker.log.error "Tossing out invalid JSON #{data.inspect} (#{$!.message})"
+        UsageTracker.log.error "Tossing out invalid JSON #{data.inspect} (#{$!.message.inspect})"
         return nil
       end
 
@@ -54,18 +54,22 @@ module UsageTracker
 
       def store(doc)
         tries = 0
-        UsageTracker.database.save_doc(doc)
 
-      rescue RestClient::Conflict
-        if (tries += 1) < 10
-          doc['_id'] = make_rand_id
-          retry
-        else
-          UsageTracker.log.error "Losing '#{doc.inspect}' because of too many conflicts"
+        begin
+          doc['_id'] = make_id
+          UsageTracker.database.save_doc(doc)
+
+        rescue RestClient::Conflict => e
+          if (tries += 1) < 10
+            UsageTracker.log.warn "Retrying to save #{doc.inspect}, try #{tries}"
+            doc['_id'] = make_rand_id
+            retry
+          else
+            UsageTracker.log.error "Losing '#{doc.inspect}' because of too many conflicts"
+          end
+        rescue Encoding::UndefinedConversionError
+          UsageTracker.log.error "Losing '#{doc.inspect}' because #$!" # FIXME handle this error properly
         end
-
-      rescue Encoding::UndefinedConversionError
-        UsageTracker.log.error "Losing '#{doc.inspect}' because #$!" # FIXME handle this error properly
       end
 
       # timestamp as _id has the advantage that documents
