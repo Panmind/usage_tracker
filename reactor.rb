@@ -10,7 +10,9 @@ module UsageTracker
     #
     def receive_data(data)
       doc = parse(data)
-      store(doc) if doc
+      if doc && check(doc)
+        store(doc)
+      end
     end
 
     # Debug hook
@@ -27,6 +29,27 @@ module UsageTracker
         JSON(data).tap {|doc| doc['_id'] = make_id}
       rescue JSON::ParserError
         UsageTracker.log.error "Tossing out invalid JSON #{data.inspect} (#{$!.message})"
+        return nil
+      end
+
+      def check(doc)
+        error =
+          if    !doc.kind_of?(Hash) then 'invalid'
+          elsif doc.empty?          then 'empty'
+          elsif !(missing = check_keys(doc)).empty?
+            "#{missing.join(', ')} missing"
+          end
+
+        if error
+          UsageTracker.log.error "Tossing out invalid document #{doc.inspect}: #{error}"
+          return nil
+        else
+          return true
+        end
+      end
+
+      def check_keys(doc)
+        %w( user_id duration env status ).reject {|k| doc.has_key?(k)}
       end
 
       def store(doc)
