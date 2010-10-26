@@ -8,14 +8,14 @@
   # property of the "doc" object.
   #
   _GET_AREA = %(
-    var match = /#{_AREAS_RE}/.exec (doc.env.path_info);
-    var area  = match ? match[1] : 'homepage(/)';
+    var match = doc.env.path_info.match (/#{_AREAS_RE}/);
+    var area  = match ? match[1] : 'other';
   ).gsub(/\s+/x, ' ').strip
 %>
 
 _id     : '_design/basic'
 language: 'javascript'
-version : '2010102601' # Format: YYYY MM DD VV
+version : '2010102602' # Format: YYYY MM DD VV
 views   :
   by_timestamp:
     map: |
