@@ -22,7 +22,7 @@ module UsageTracker
       @settings ||= begin
         log "Loading #{env} environment"
 
-        rc_file = Pathname.new(__FILE__).join('..', '..', '..', 'config', 'settings.yml')
+        rc_file = root.join('config', 'settings.yml')
         raise "Configuration file #{rc_file} not found" unless rc_file.exist?
 
         settings = YAML.load_file(rc_file.to_s)[env][:usage_tracker]
@@ -61,6 +61,10 @@ module UsageTracker
       raise "Unable to connect to database #{settings.couchdb}"
     end
 
+    def write_pid!(pid = $$)
+      root.join(*%w(tmp pids usage_tracker.pid)).open('w+') {|f| f.write(pid)}
+    end
+
     def log(message = nil)
       @log ||= Log.new
       message ? @log.info(message) : @log
@@ -72,6 +76,12 @@ module UsageTracker
     end
 
     private
+      # Returns the Rails.root as a Pathname
+      #
+      def root
+        Pathname.new(__FILE__).dirname.join *%w(..)*2
+      end
+
       # Loads CouchDB views from views.yml and verifies that
       # they are loaded in the current instance, upgrading
       # them if necessary.

@@ -43,6 +43,8 @@ Deploying
 
  * The daemon exits gracefully if it receives the INT or the TERM signals.
 
+ * The daemon writes its pid into tmp/pids/usage_tracker.pid
+
 Testing
 =======
 

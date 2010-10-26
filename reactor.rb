@@ -116,6 +116,7 @@ module UsageTracker
 
       EventMachine.open_datagram_socket host, port, Reactor
       log "Listening on #{host}:#{port} UDP"
+      write_pid!
 
       $stderr.puts "Started, logging to #{log.path}"
       [$stdin, $stdout, $stderr].each {|io| io.reopen '/dev/null'}
