@@ -53,6 +53,18 @@ module UsageTracker
 
   connect!
 
+  # Setup signal handlers
+  #
+  #  * INT, TERM: graceful exit
+  #  * USR1     : rotate logs
+  #
+  def self.sigexit(sig)
+    log "Received SIG#{sig}"
+    EventMachine.stop_event_loop
+  end
+
+  trap('INT')  { sigexit 'INT'  }
+  trap('TERM') { sigexit 'TERM' }
   trap('USR1') { log.rotate  }
 
   EventMachine.run do
@@ -76,4 +88,8 @@ module UsageTracker
       )
     end
   end
+
+  # Goodbye!
+  #
+  log 'Exiting'
 end
