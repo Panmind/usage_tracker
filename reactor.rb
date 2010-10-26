@@ -20,7 +20,8 @@ module UsageTracker
       alias :real_receive_data :receive_data
       def receive_data(data)
         UsageTracker.log.debug "Received #{data.inspect}"
-        real_receive_data(data)
+        ret = real_receive_data(data)
+        UsageTracker.log.debug ret ? "Stored #{ret}" : 'Failed to store input data'
       end
     end
 
