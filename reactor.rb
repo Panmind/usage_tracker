@@ -87,10 +87,12 @@ module UsageTracker
       $stderr.puts "Started, logging to #{log.path}"
       [$stdin, $stdout, $stderr].each {|io| io.reopen '/dev/null'}
 
-    rescue RuntimeError => e
-      raise(
-        e.message == 'no acceptor' ? "Unable to bind to #{host}:#{port}" : e.message
-      )
+    rescue Exception => e
+      message = e.message == 'no datagram socket' ? "Unable to bind #{host}:#{port}" : e
+      log.fatal message
+      $stderr.puts message unless $stderr.closed?
+      EventMachine.stop_event_loop
+      exit 1
     end
   end
 
