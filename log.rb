@@ -4,7 +4,7 @@ module UsageTracker
   class Log
     attr_reader :path
 
-    [:info, :warn, :error, :fatal].each do |severity|
+    [:debug, :info, :warn, :error, :fatal].each do |severity|
       define_method(severity) {|*args| @logger.send(severity, *args)}
     end
 

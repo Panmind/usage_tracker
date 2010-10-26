@@ -13,6 +13,15 @@ module UsageTracker
       store(doc) if doc
     end
 
+    # Debug hook
+    if UsageTracker.env == 'test'
+      alias :real_receive_data :receive_data
+      def receive_data(data)
+        UsageTracker.log.debug "Received #{data.inspect}"
+        real_receive_data(data)
+      end
+    end
+
     private
       def parse(data)
         JSON(data).tap {|doc| doc['_id'] = make_id}
