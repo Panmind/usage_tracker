@@ -27,7 +27,7 @@ module UsageTracker
 
     private
       def parse(data)
-        JSON(data)
+        JSON(data).tap {|h| h.reject! {|k,v| v.nil?}}
       rescue JSON::ParserError
         UsageTracker.log.error "Tossing out invalid JSON #{data.inspect} (#{$!.message.inspect})"
         return nil
@@ -50,7 +50,7 @@ module UsageTracker
       end
 
       def check_keys(doc)
-        %w( user_id duration env status ).reject {|k| doc.has_key?(k)}
+        %w( duration env status ).reject {|k| doc.has_key?(k)}
       end
 
       def store(doc)
