@@ -49,6 +49,7 @@ module UsageTracker
           :user_id  => env['rack.session'][:user_id],
           :duration => ((req_end - req_start) * 1000).to_i,
           :backend  => ServerName,
+          :xhr      => env['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest',
           :context  => Context.get,
           :env      => {},
           :status   => response[0] # response contains [status, headers, body]
