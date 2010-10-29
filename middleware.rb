@@ -8,6 +8,7 @@ module UsageTracker
   class Middleware
     Config     = APPLICATION_CONFIG[:usage_tracker]
     Host, Port = Config[:listen].split(':').each(&:freeze) rescue nil
+    ServerName = `hostname`.strip.freeze
 
     Save = [
       "REMOTE_ADDR",
@@ -47,6 +48,7 @@ module UsageTracker
         data = {
           :user_id  => env['rack.session'][:user_id],
           :duration => ((req_end - req_start) * 1000).to_i,
+          :backend  => ServerName,
           :context  => Context.get,
           :env      => {},
           :status   => response[0] # response contains [status, headers, body]

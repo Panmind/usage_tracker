@@ -77,6 +77,7 @@ module UsageTracker
         assert_equal '/projects/1/error', doc.env.request_uri
         assert_equal @user.id,            doc.user_id
         assert_equal 500,                 doc.status
+        assert_equal `hostname`.strip,    doc.backend
       end
     end
 
