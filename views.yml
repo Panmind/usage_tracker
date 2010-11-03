@@ -15,13 +15,25 @@
 
 _id     : '_design/basic'
 language: 'javascript'
-version : '2010102602' # Format: YYYY MM DD VV
+version : '2010110301' # Format: YYYY MM DD VV
 views   :
   by_timestamp:
     map: |
       function (doc) {
         if (doc.env)
           emit (doc._id, doc);
+      }
+
+  by_date:
+    map: |
+      function (doc) {
+        var date = new Date (parseFloat (doc._id) * 1000);
+        emit([date.getFullYear (), date.getMonth (), date.getDay ()], 1);
+      }
+
+    reduce: |
+      function (keys, values) {
+        return sum (values);
       }
 
   by_user_and_timestamp:
