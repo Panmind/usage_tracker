@@ -15,7 +15,7 @@
 
 _id     : '_design/basic'
 language: 'javascript'
-version : '2010110301' # Format: YYYY MM DD VV
+version : '2010110401' # Format: YYYY MM DD VV
 views   :
   by_timestamp:
     map: |
@@ -28,7 +28,7 @@ views   :
     map: |
       function (doc) {
         var date = new Date (parseFloat (doc._id) * 1000);
-        emit([date.getFullYear (), date.getMonth (), date.getDay ()], 1);
+        emit([date.getUTCFullYear (), date.getUTCMonth (), date.getUTCDate ()], 1);
       }
 
     reduce: |
