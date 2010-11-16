@@ -6,7 +6,21 @@ What is it?
 
  1. A Rack::Middleware that sends selected parts of the request environment to a socket (middleware.rb)
  2. An EventMachine daemon that opens an UDP socket and sends out received data to CouchDB (reactor.rb)
- 3. A set of CouchDB map-reduce views, for storage/analysis                                 (views.yml)
+ 3. A set of CouchDB map-reduce views, for analysis                                         (views.yml)
+
+
+Does it work?
+=============
+
+Yes, but currently this release is deeply coupled to Rails and to Panmind,
+thus some work should be done to make this code independent from the logic
+of a specific app.
+
+Fork it and do it, if you're interested in logging HTTP requests to your
+app into CouchDB for analysis.
+
+These instructions as well have to be updated. We just can't wait to see
+the Open Source community do it :-).
 
 
 Deploying
