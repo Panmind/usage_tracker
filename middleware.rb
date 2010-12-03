@@ -60,8 +60,8 @@ module UsageTracker
         self.class.track(data.to_json)
 
       rescue
-        self.class.log($!.message)
-        self.class.log($!.backtrace.join("\n"))
+        UsageTracker.log($!.message)
+        UsageTracker.log($!.backtrace.join("\n"))
       end
 
     ensure
@@ -81,13 +81,7 @@ module UsageTracker
         end
 
       rescue Timeout::Error, Errno::EWOULDBLOCK, Errno::EAGAIN, Errno::EINTR
-        log "Cannot track data: #{$!.message}"
-      end
-
-      def log(message)
-        message = "Usage Tracker: #{message}"
-        Rails.logger.error message
-        $stderr.puts "** #{message}"
+        UsageTracker.log "Cannot track data: #{$!.message}"
       end
     end
   end
