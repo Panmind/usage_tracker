@@ -64,11 +64,13 @@ module UsageTracker
         self.class.track(data.to_json)
 
       rescue
+        raise unless response # Error in the application, raise it up
+
+        # Error in usage tracker itself
         UsageTracker.log($!.message)
         UsageTracker.log($!.backtrace.join("\n"))
       end
 
-    ensure
       return response
     end
 
