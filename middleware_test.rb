@@ -7,7 +7,7 @@
 
 # this checks the end-point of the usage tracking (arrival in the database) ->
 # consider checking intermediate steps.......
-require 'extras/usage_tracker/initializer'
+require 'usage_tracker'
 
 module UsageTracker
   class IntegrationTest < ActionController::IntegrationTest

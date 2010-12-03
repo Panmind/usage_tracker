@@ -1,5 +1,5 @@
 require 'timeout'
-require 'usage_tracker/initializer'
+require 'usage_tracker'
 require 'usage_tracker/context'
 require 'usage_tracker/railtie' if defined?(Rails)
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-require 'extras/usage_tracker/initializer'
+require 'usage_tracker'
 require 'eventmachine'
 require 'json'
 

@@ -1,3 +1,5 @@
+require 'usage_tracker/log'
+
 module UsageTracker
   module Context
     @@key = 'usage_tracker.context'.freeze
