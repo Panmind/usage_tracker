@@ -6,9 +6,7 @@ require 'extras/usage_tracker/context'
 #
 module UsageTracker
   class Middleware
-    ServerName = `hostname`.strip.freeze
-
-    Save = [
+    @@headers = [
       "REMOTE_ADDR",
       "REQUEST_METHOD",
       "PATH_INFO",
@@ -33,6 +31,8 @@ module UsageTracker
       "QUERY_STRING"
     ].freeze
 
+    @@backend = `hostname`.strip.freeze
+
     def initialize(app, host, port)
       @app, @host, @port = app, host, port
     end
@@ -46,14 +46,14 @@ module UsageTracker
         data = {
           :user_id  => env['rack.session'][:user_id],
           :duration => ((req_end - req_start) * 1000).to_i,
-          :backend  => ServerName,
+          :backend  => @@backend,
           :xhr      => env['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest',
           :context  => Context.get,
           :env      => {},
           :status   => response[0] # response contains [status, headers, body]
         }
 
-        Save.each {|key| data[:env][key.downcase] = env[key] unless env[key].blank?}
+        @@headers.each {|key| data[:env][key.downcase] = env[key] unless env[key].blank?}
 
         self.class.track(data.to_json)
 
