@@ -1,9 +1,10 @@
 require 'timeout'
 require 'usage_tracker/initializer'
 require 'usage_tracker/context'
+require 'usage_tracker/railtie' if defined?(Rails)
 
-# This middleware sends the incoming request-object to a specified socket,
-# writing them to a socket where it can be picked up and parsed for storage
+# This middleware extracts some data from the incoming request
+# and sends it to the reactor, that parses and stores it.
 #
 module UsageTracker
   class Middleware
