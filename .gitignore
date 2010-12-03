@@ -1,0 +1,5 @@
+*.gemspec
+html
+pkg
+.*.sw?
+.DS_Store
