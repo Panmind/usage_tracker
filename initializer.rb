@@ -34,17 +34,17 @@ module UsageTracker
         if settings.blank?
           settings = @@defaults
           log "#{env} configuration block not found in #{rc_file}, using defaults"
-        elsif settings.values_at(:couchdb, :listen).any?(&:nil?)
+        elsif settings.values_at(*%w(couchdb listen)).any?(&:blank?)
           raise "Incomplete configuration: please set the 'couchdb' and 'listen' keys"
         end
 
-        host, port = settings.delete(:listen).split(':')
+        host, port = settings.delete('listen').split(':')
 
         if [host, port].any? {|x| x.strip.empty?}
           raise "Please specify where to listen as host:port"
         end
 
-        settings[:host], settings[:port] = host, port.to_i
+        settings['host'], settings['port'] = host, port.to_i
 
         OpenStruct.new settings
       end
