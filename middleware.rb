@@ -33,8 +33,11 @@ module UsageTracker
       "QUERY_STRING"
     ].freeze
 
-    @@backend = `hostname`.strip.freeze
-    @@host, @@port = UsageTracker.settings.host, UsageTracker.settings.port
+    @@backend, @@host, @@port = [
+      `hostname`.strip,
+      UsageTracker.settings.host,
+      UsageTracker.settings.port
+    ].each(&:freeze)
 
     def initialize(app)
       @app = app
