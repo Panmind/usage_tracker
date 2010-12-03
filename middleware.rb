@@ -1,5 +1,6 @@
 require 'timeout'
-require 'extras/usage_tracker/context'
+require 'usage_tracker/initializer'
+require 'usage_tracker/context'
 
 # This middleware sends the incoming request-object to a specified socket,
 # writing them to a socket where it can be picked up and parsed for storage
@@ -32,9 +33,10 @@ module UsageTracker
     ].freeze
 
     @@backend = `hostname`.strip.freeze
+    @@host, @@port = UsageTracker.settings.listen.split(':')
 
-    def initialize(app, host, port)
-      @app, @host, @port = app, host, port
+    def initialize(app)
+      @app = app
     end
 
     def call(env)
@@ -73,7 +75,7 @@ module UsageTracker
       def track(data)
         Timeout.timeout(1) do
           UDPSocket.open do |sock|
-            sock.connect(Host, Port.to_i)
+            sock.connect(@@host, @@port.to_i)
             sock.write_nonblock(data << "\n")
           end
         end
