@@ -19,7 +19,7 @@ module UsageTracker
       'listen'  => '127.0.0.1:5985'
     }
 
-    # Memoizes settings from ../../../config/settings.yml config,
+    # Memoizes settings from the ./config/usage_tracker.yml file,
     # relative from __FILE__ and searches for the "usage_tracker"
     # configuration block. Raises RuntimeError if it cannot find
     # the configuration.
@@ -28,7 +28,7 @@ module UsageTracker
       @settings ||= begin
         log "Loading #{env} environment"
 
-        rc_file  = root.join('config.yml')
+        rc_file  = Pathname.new('.').join('config', 'usage_tracker.yml')
         settings = YAML.load(rc_file.read)[env] if rc_file.exist?
 
         if settings.blank?
@@ -73,7 +73,9 @@ module UsageTracker
     end
 
     def write_pid!(pid = $$)
-      root.join('usage_tracker.pid').open('w+') {|f| f.write(pid)}
+      dir = Pathname.new('.').join('tmp', 'pids')
+      dir = Pathname.new(Dir.tmpdir) unless dir.directory?
+      dir.join('usage_tracker.pid').open('w+') {|f| f.write(pid)}
     end
 
     def log(message = nil)
@@ -87,12 +89,6 @@ module UsageTracker
     end
 
     private
-      # Returns the UsageTracker.root as a Pathname
-      #
-      def root
-        Pathname.new(__FILE__).dirname
-      end
-
       # Loads CouchDB views from views.yml and verifies that
       # they are loaded in the current instance, upgrading
       # them if necessary.
