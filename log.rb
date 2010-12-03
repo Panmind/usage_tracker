@@ -13,10 +13,12 @@ module UsageTracker
     end
 
     def path
-      @path ||= Pathname.new(__FILE__).dirname.
-        join('..', '..', 'log', 'usage_tracker.log').
-        realpath.to_s.freeze
-    end
+      @path ||= if File.directory?('log')
+        Pathname.new('.').join('log', 'usage_tracker.log')
+      else
+        Pathname.new('usage_tracker.log')
+      end
+    end 
 
     def open
       @logger           = Logger.new(path.to_s)
