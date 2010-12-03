@@ -13,6 +13,11 @@ module UsageTracker
       @env ||= ENV['RAILS_ENV'] || ARGV[0] || 'development'
     end
 
+    @@defaults = {
+      'couchdb' => 'http://localhost:5984/usage_tracker',
+      'listen'  => '127.0.0.1:5985'
+    }
+
     # Memoizes settings from ../../../config/settings.yml config,
     # relative from __FILE__ and searches for the "usage_tracker"
     # configuration block. Raises RuntimeError if it cannot find
@@ -22,16 +27,13 @@ module UsageTracker
       @settings ||= begin
         log "Loading #{env} environment"
 
-        rc_file = root.join('config.yml')
-        raise "Configuration file #{rc_file} not found" unless rc_file.exist?
+        rc_file  = root.join('config.yml')
+        settings = YAML.load(rc_file.read)[env] if rc_file.exist?
 
-        settings = YAML.load(rc_file.read)[env]
-
-        unless settings
-          raise "#{env} configuration block not found in #{rc_file}"
-        end
-
-        if settings.values_at(:couchdb, :listen).any?(&:nil?)
+        if settings.blank?
+          settings = @@defaults
+          log "#{env} configuration block not found in #{rc_file}, using defaults"
+        elsif settings.values_at(:couchdb, :listen).any?(&:nil?)
           raise "Incomplete configuration: please set the 'couchdb' and 'listen' keys"
         end
 
