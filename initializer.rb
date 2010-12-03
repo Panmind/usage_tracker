@@ -68,8 +68,8 @@ module UsageTracker
         end
 
       load_views!
-    rescue Errno::ECONNREFUSED
-      raise "Unable to connect to database #{settings.couchdb}"
+    rescue Errno::ECONNREFUSED, RestClient::Exception => e
+      raise "Unable to connect to database #{settings.couchdb}: #{e.message}"
     end
 
     def write_pid!(pid = $$)
