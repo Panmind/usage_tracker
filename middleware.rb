@@ -51,7 +51,7 @@ module UsageTracker
           :duration => ((req_end - req_start) * 1000).to_i,
           :backend  => @@backend,
           :xhr      => env['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest',
-          :context  => Context.get,
+          :context  => env[Context.key],
           :env      => {},
           :status   => response[0] # response contains [status, headers, body]
         }

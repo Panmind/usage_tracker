@@ -1,25 +1,24 @@
 module UsageTracker
   module Context
-    extend self
-    Key = 'usage_tracker.context'
+    @@key = 'usage_tracker.context'.freeze
+    mattr_reader :key
 
-    def set(data)
-      unless env[Key].blank?
+    # Sets the env +Key+ variable with the provided +data+
+    #
+    def usage_tracker_context=(data)
+      unless env[key].blank?
         unless Rails.env.test? && !caller.grep(/test\/functional/).blank?
-          Middleware.log 'WARNING: overwriting context data!'
+          UsageTracker.log 'WARNING: overwriting context data!'
         end
       end
 
-      env[Key] = data
+      env[key] = data
     end
 
-    # Reads the current context data and sets
-    # the env +Key+ variable to +nil+
+    # Shorthand for self.usage_tracker_context = data
     #
-    def get
-      ctx = env[Key]
-      env[Key] = nil
-      return ctx
+    def usage_tracker_context(data)
+      self.usage_tracker_context = data
     end
 
   end
