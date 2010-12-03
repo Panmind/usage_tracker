@@ -6,8 +6,6 @@ require 'extras/usage_tracker/context'
 #
 module UsageTracker
   class Middleware
-    Config     = APPLICATION_CONFIG[:usage_tracker]
-    Host, Port = Config[:listen].split(':').each(&:freeze) rescue nil
     ServerName = `hostname`.strip.freeze
 
     Save = [
@@ -35,8 +33,8 @@ module UsageTracker
       "QUERY_STRING"
     ].freeze
 
-    def initialize(app)
-      @app = app
+    def initialize(app, host, port)
+      @app, @host, @port = app, host, port
     end
 
     def call(env)
@@ -69,15 +67,6 @@ module UsageTracker
     end
 
     class << self
-      # Adds the UsageTracker::Middleware to the middleware stack,
-      # if configuration is present.
-      #
-      def insert
-        return unless enabled?
-        ActionController::Dispatcher.middleware.insert_before(Rack::Head, self)
-        log 'inserted before Rack::Head'
-      end
-
       # Writes the given `data` to the reactor, using the UDP protocol.
       # Times out after 1 second. If a write error occurs, data is lost.
       #
@@ -91,10 +80,6 @@ module UsageTracker
 
       rescue Timeout::Error, Errno::EWOULDBLOCK, Errno::EAGAIN, Errno::EINTR
         log "Cannot track data: #{$!.message}"
-      end
-
-      def enabled?
-        !Config.nil?
       end
 
       def log(message)
