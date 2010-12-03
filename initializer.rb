@@ -22,13 +22,13 @@ module UsageTracker
       @settings ||= begin
         log "Loading #{env} environment"
 
-        rc_file = root.join('config', 'settings.yml')
+        rc_file = root.join('config.yml')
         raise "Configuration file #{rc_file} not found" unless rc_file.exist?
 
-        settings = YAML.load_file(rc_file.to_s)[env][:usage_tracker]
+        settings = YAML.load(rc_file.read)[env]
 
         unless settings
-          raise ":usage_tracker configuration block not found in #{rc_file}"
+          raise "#{env} configuration block not found in #{rc_file}"
         end
 
         if settings.values_at(:couchdb, :listen).any?(&:nil?)
@@ -62,7 +62,7 @@ module UsageTracker
     end
 
     def write_pid!(pid = $$)
-      root.join(*%w(tmp pids usage_tracker.pid)).open('w+') {|f| f.write(pid)}
+      root.join('usage_tracker.pid').open('w+') {|f| f.write(pid)}
     end
 
     def log(message = nil)
@@ -76,10 +76,10 @@ module UsageTracker
     end
 
     private
-      # Returns the Rails.root as a Pathname
+      # Returns the UsageTracker.root as a Pathname
       #
       def root
-        Pathname.new(__FILE__).dirname.join *%w(..)*2
+        Pathname.new(__FILE__).dirname
       end
 
       # Loads CouchDB views from views.yml and verifies that
