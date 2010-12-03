@@ -36,7 +36,7 @@ Deploying
    option nor the RAILS_ENV environment variable are set.
 
    or can be put under Upstart using the provided configuration file located in
-   `config/panmind_usage_tracker.conf`.
+   `config/usage_tracker_upstart.conf`. Check it out and modify it to suit your needs.
 
    The daemon logs to `log/usage_tracker.log` and rotates its logs when receives
    the USR1 signal.
