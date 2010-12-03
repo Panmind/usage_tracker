@@ -35,6 +35,14 @@ module UsageTracker
           raise "Incomplete configuration: please set the 'couchdb' and 'listen' keys"
         end
 
+        host, port = settings.delete(:listen).split(':')
+
+        if [host, port].any? {|x| x.strip.empty?}
+          raise "Please specify where to listen as host:port"
+        end
+
+        settings[:host], settings[:port] = host, port.to_i
+
         OpenStruct.new settings
       end
     end

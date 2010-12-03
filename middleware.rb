@@ -33,7 +33,7 @@ module UsageTracker
     ].freeze
 
     @@backend = `hostname`.strip.freeze
-    @@host, @@port = UsageTracker.settings.listen.split(':')
+    @@host, @@port = UsageTracker.settings.host, UsageTracker.settings.port
 
     def initialize(app)
       @app = app

@@ -104,11 +104,7 @@ module UsageTracker
   #
   EventMachine.run do
     begin
-      host, port = UsageTracker.settings.listen.split(':')
-
-      if [host, port].any? {|x| x.strip.empty?}
-        raise "Please specify where to listen as host:port"
-      end
+      host, port = UsageTracker.settings.host, UsageTracker.settings.port
 
       unless (1024..65535).include? port.to_i
         raise "Please set a listening port between 1024 and 65535"
