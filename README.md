@@ -4,67 +4,62 @@ Panmind Usage Tracker
 What is it?
 ===========
 
- 1. A Rack::Middleware that sends selected parts of the request environment to a socket (middleware.rb)
- 2. An EventMachine daemon that opens an UDP socket and sends out received data to CouchDB (reactor.rb)
- 3. A set of CouchDB map-reduce views, for analysis                                         (views.yml)
+ 1. A `Rack::Middleware` that sends selected parts of the request environment to an UDP socket
+ 2. An `EventMachine` daemon that opens an UDP socket and sends out received data to CouchDB
+ 3. A set of CouchDB map-reduce views, for analysis
 
 
 Does it work?
 =============
 
-Yes, but currently this release is deeply coupled to Rails and to Panmind,
-thus some work should be done to make this code independent from the logic
-of a specific app.
+Yes, but the release is still incomplete, because currently tests are too
+tied to Panmind logic.
 
-Fork it and do it, if you're interested in logging HTTP requests to your
-app into CouchDB for analysis.
-
-These instructions as well have to be updated. We just can't wait to see
-the Open Source community do it :-).
-
+If you can help in complete the test suite, it is much appreciated :-).
 
 Deploying
 =========
 
- * Verify to have the required configuration stanza in `config/settings.yml`:
+ * Add the usage_tracker gem to your Gemfile and require the middleware
 
-    :usage_tracker:
-      :couchdb: "http://127.0.0.1:5984/pm_usage" # The CouchDB database URI
-      :listen:  "127.0.0.1:8765"                 # Where to listen/connect to
+   gem 'usage_tracker', :require => 'usage_tracker/middleware'
 
- * The Middleware gets loaded automatically by the Rails app if the configuration
-   is present and valid;
+ * Add the Middleware to your application:
 
- * The daemon can be started manually with the following command:
+    Your::Application.config.middleware.use UsageTracker::Middleware
 
-     $ ruby extras/usage_tracker/reactor.rb [environment]
+ * The daemon can be started manually with the following command, inside a Rails.root:
+
+     $ usage_tracker [environment]
 
    `environment` is optional and will default to "development" if no command line
    option nor the RAILS_ENV environment variable are set.
 
    or can be put under Upstart using the provided configuration file located in
-   `extras/fabric/files/upstart/panmind_usage_tracker.conf`.
+   `config/panmind_usage_tracker.conf`.
 
    The daemon logs to `log/usage_tracker.log` and rotates its logs when receives
    the USR1 signal.
+
+ * The daemon writes its pid into tmp/pids/usage_tracker.pid
+
+ * The daemon connects to a Couch database named `usage_tracker` running on `localhost`,
+   default port `5984/TCP`, and listens on `localhost`, port `5985/UDP` by default.
+   You can change these settings via a `config/usage_tracker.yml` file. See the example
+   in the `config` directory of the gem distribution.
 
  * The CouchDB instance must be running, the database is created (and updated)
    if necessary.
 
  * If the daemon cannot start, e.g. because of unavailable database or listening
    address, it will print a diagnostig message to STDERR, log to usage_tracker.log
-   and exit with an 1 status.
+   and exit with status of 1.
 
  * The daemon exits gracefully if it receives the INT or the TERM signals.
-
- * The daemon writes its pid into tmp/pids/usage_tracker.pid
 
 Testing
 =======
 
-If the configuration is present, the `test/integration/usage_tracker_test.rb`
-tests some (but not all, unluckily, more work need to be done) parts of the
-workflow.
-
-To run the test, make sure you have an instance of the daemon running.
-
+The current test suite, brutally extracted from Panmind codebase, is in the
+`middleware_test.rb` file at the root of the Gem distribution. It is of no
+use except Panmind, but it's a start for writing new ones. Please help! :-)
