@@ -4,7 +4,8 @@ require 'yaml'
 require 'pathname'
 require 'ostruct'
 require 'couchrest'
-require 'extras/usage_tracker/log'
+require 'active_support/core_ext/object/blank'
+require 'usage_tracker/log'
 
 module UsageTracker
   class << self
