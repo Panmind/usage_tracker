@@ -2,3 +2,5 @@ html
 pkg
 .*.sw?
 .DS_Store
+.rvmrc
+*.log
