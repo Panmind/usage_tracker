@@ -10,6 +10,7 @@ describe UsageTracker::Reactor do
   # Not a great test, ensures the run! method does not crash, at least
   it "should run the reactor" do
     EM.run do 
+      UsageTracker.connect! 
       UsageTracker.run!
       done
     end
@@ -17,6 +18,7 @@ describe UsageTracker::Reactor do
 
   it "should accept valid keys" do
     EM.run do 
+      UsageTracker.connect! 
       UsageTracker.run!
       UDPSocket.open do |sock|
         sock.connect(UsageTracker.settings.host, UsageTracker.settings.port.to_i)
