@@ -72,6 +72,19 @@ module UsageTracker
       raise "Unable to connect to database #{settings.couchdb}: #{e.message}"
     end
 
+    # Code to run inside EventMachine
+    def run! 
+      host, port = UsageTracker.settings.host, UsageTracker.settings.port
+
+      unless (1024..65535).include? port.to_i
+        raise "Please set a listening port between 1024 and 65535"
+      end
+
+      EventMachine.open_datagram_socket host, port, Reactor
+      log "Listening on #{host}:#{port} UDP"
+      write_pid!
+    end 
+
     def write_pid!(pid = $$)
       dir = Pathname.new('.').join('tmp', 'pids')
       dir = Pathname.new(Dir.tmpdir) unless dir.directory?
