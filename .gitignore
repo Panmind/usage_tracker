@@ -4,3 +4,5 @@ pkg
 .DS_Store
 .rvmrc
 *.log
+Gemfile.lock
+
