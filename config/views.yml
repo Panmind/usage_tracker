@@ -43,10 +43,10 @@ views   :
           emit ([doc.user_id, doc._id], doc);
       }
 
-  res_count:
+  projects_count:
     map: |
       function (doc) {
-        if (doc.env && doc.env.path_info.indexOf ('res/') > 0)
+        if (doc.env && doc.env.path_info.indexOf('projects/') > 0 && doc.env.path_info.indexOf("cover") == -1 && doc.status == 200)
           emit (doc.env.path_info.split ('/')[2], 1);
       }
     reduce: |
