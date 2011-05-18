@@ -6,6 +6,7 @@ require 'ostruct'
 require 'couchrest'
 require 'active_support/core_ext/object/blank'
 require 'usage_tracker/log'
+require 'usage_tracker/adapters/adapter'
 
 module UsageTracker
   class << self

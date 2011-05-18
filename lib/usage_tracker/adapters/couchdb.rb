@@ -5,8 +5,12 @@ require 'yaml'
 module UsageTracker
   module Adapters
     class Couchdb
+      attr_accessor :database
       def initialize (settings)
-        @database = CouchRest.database!(settings.couchdb)
+        @database =
+          CouchRest.database!(settings.couchdb).tap do |db|
+            db.info
+          end
         load_views!
       rescue Errno::ECONNREFUSED, RestClient::Exception => e
         raise "Unable to connect to database #{settings.couchdb}: #{e.message}"
@@ -18,7 +22,7 @@ module UsageTracker
       # them if necessary.
       def load_views!
         new = YAML.load ERB.new(
-          Pathname.new(__FILE__).dirname.join('..', '..', 'config', 'views.yml').read
+          Pathname.new(__FILE__).dirname.join('..', '..', '..', 'config', 'views.yml').read
         ).result
 
         id  = new['_id']

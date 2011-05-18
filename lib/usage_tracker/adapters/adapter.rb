@@ -1,10 +1,12 @@
+require 'usage_tracker/adapters/couchdb'
+
 module UsageTracker
   module Adapters
     class Adapter
       def self::new(adapter, settings)
         klass =
           case adapter
-            when 'coachdb'
+            when 'couchdb'
               Couchdb
             when 'redis'
               Redis
