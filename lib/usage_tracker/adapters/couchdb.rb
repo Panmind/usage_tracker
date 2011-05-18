@@ -5,9 +5,11 @@ require 'yaml'
 module UsageTracker
   module Adapters
     class Couchdb
-
       def initialize (settings)
         @database = CouchRest.database!(settings.couchdb)
+        load_views!
+      rescue Errno::ECONNREFUSED, RestClient::Exception => e
+        raise "Unable to connect to database #{settings.couchdb}: #{e.message}"
       end
 
       private
