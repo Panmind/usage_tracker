@@ -36,7 +36,7 @@ module UsageTracker
         if settings.blank?
           settings = @@defaults
           log "#{env} configuration block not found in #{rc_file}, using defaults"
-        elsif settings.values_at(*%w(couchdb listen)).any?(&:blank?)
+        elsif settings.values_at(*%w(adapter listen)).any?(&:blank?)
           raise "Incomplete configuration: please set the 'couchdb' and 'listen' keys"
         end
 
