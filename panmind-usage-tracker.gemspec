@@ -24,7 +24,6 @@ Gem::Specification.new do |s|
     "bin/usage_tracker",
     "config/usage_tracker.yml.sample",
     "config/usage_tracker_upstart.conf",
-    "config/views.yml",
     "lib/usage_tracker.rb",
     "lib/usage_tracker/context.rb",
     "lib/usage_tracker/log.rb",
