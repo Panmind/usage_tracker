@@ -64,6 +64,7 @@ module UsageTracker
     #
     def connect!
       @adapter = Adapters::Adapter::new settings.adapter, settings
+      @database = @adapter.database
     end
 
     def write_pid!(pid = $$)
