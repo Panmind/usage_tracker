@@ -6,7 +6,7 @@ require 'ostruct'
 require 'couchrest'
 require 'active_support/core_ext/object/blank'
 require 'usage_tracker/log'
-require 'usage_tracker/adapters/adapter'
+require 'usage_tracker/adapter'
 
 module UsageTracker
   class << self
@@ -63,7 +63,7 @@ module UsageTracker
     # Raises RuntimeError if the connection could not be established
     #
     def connect!
-      @adapter = Adapters::Adapter::new settings.adapter, settings
+      @adapter = Adapter::new settings
       @database = @adapter.database
     end
 
