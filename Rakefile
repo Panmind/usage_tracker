@@ -20,6 +20,9 @@ begin
     gemspec.add_dependency('rails', '~> 3.0')
     gemspec.add_dependency('eventmachine')
     gemspec.add_dependency('couchrest')
+    gemspec.add_dependency('mongo')
+    gemspec.add_dependency('bson')
+    gemspec.add_dependency('bson_ext')
   end
 rescue LoadError
   puts 'Jeweler not available. Install it with: gem install jeweler'
@@ -39,4 +42,3 @@ task :default do
   puts 'Can you help in writing tests? Please do :-)'
   puts
 end
-
