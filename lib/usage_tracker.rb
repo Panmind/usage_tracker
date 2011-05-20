@@ -56,6 +56,10 @@ module UsageTracker
       @database or raise "Not connected to the database"
     end
 
+    def adapter
+      @adapter or raise "Not connected to the database adapter"
+    end
+
     # Connects to the configured CouchDB and memoizes the
     # CouchRest::Database connection into an instance variable
     # and calls +load_views!+
