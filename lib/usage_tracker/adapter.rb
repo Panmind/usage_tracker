@@ -1,4 +1,5 @@
 require 'usage_tracker/adapters/couchdb'
+require 'usage_tracker/adapters/mongodb'
 
 module UsageTracker
   class Adapter
