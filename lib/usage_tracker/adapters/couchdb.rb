@@ -8,11 +8,11 @@ module UsageTracker
       attr_accessor :database
       def initialize (settings)
         @database =
-          CouchRest.database!(settings.couchdb).tap do |db|
+          CouchRest.database!(settings.database).tap do |db|
             db.info
           end
       rescue Errno::ECONNREFUSED, RestClient::Exception => e
-        raise "Unable to connect to database #{settings.couchdb}: #{e.message}"
+        raise "Unable to connect to database #{settings.database}: #{e.message}"
       end
 
       def save_doc (doc)

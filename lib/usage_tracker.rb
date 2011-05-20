@@ -17,7 +17,7 @@ module UsageTracker
 
     @@defaults = {
       'adapter' => 'couchdb',
-      'couchdb' => 'http://localhost:5984/usage_tracker',
+      'database' => 'http://127.0.0.1:5984/usage_tracker',
       'listen'  => '127.0.0.1:5985'
     }
 
@@ -36,8 +36,8 @@ module UsageTracker
         if settings.blank?
           settings = @@defaults
           log "#{env} configuration block not found in #{rc_file}, using defaults"
-        elsif settings.values_at(*%w(adapter listen)).any?(&:blank?)
-          raise "Incomplete configuration: please set the 'couchdb' and 'listen' keys"
+        elsif settings.values_at(*%w(adapter database listen)).any?(&:blank?)
+          raise "Incomplete configuration: please set the 'adapter', 'database' and 'listen' keys"
         end
 
         host, port = settings.delete('listen').split(':')
