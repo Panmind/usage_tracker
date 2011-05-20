@@ -57,7 +57,7 @@ module UsageTracker
         tries = 0
 
         begin
-          #doc['_id'] = make_id
+          doc['_id'] = make_id
           UsageTracker.adapter.save_doc(doc)
 
         rescue RestClient::Conflict => e

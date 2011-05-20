@@ -6,11 +6,11 @@ module UsageTracker
       klass =
         case settings.adapter
           when 'couchdb'
-            Couchdb
+            Adapters::Couchdb
           when 'redis'
-            Redis
+            Adapters::Redis
           when 'mongodb'
-            Mongodb
+            Adapters::Mongodb
         end
       klass::new(settings)
     end
