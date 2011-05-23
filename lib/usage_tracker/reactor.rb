@@ -58,7 +58,7 @@ module UsageTracker
 
         begin
           doc['_id'] = make_id
-          UsageTracker.database.save_doc(doc)
+          UsageTracker.adapter.save_doc(doc)
 
         rescue RestClient::Conflict => e
           if (tries += 1) < 10
