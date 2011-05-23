@@ -6,6 +6,7 @@ require 'ostruct'
 require 'couchrest'
 require 'active_support/core_ext/object/blank'
 require 'usage_tracker/log'
+require 'usage_tracker/adapter'
 
 module UsageTracker
   class << self
@@ -15,7 +16,8 @@ module UsageTracker
     end
 
     @@defaults = {
-      'couchdb' => 'http://localhost:5984/usage_tracker',
+      'adapter' => 'couchdb',
+      'database' => 'http://127.0.0.1:5984/usage_tracker',
       'listen'  => '127.0.0.1:5985'
     }
 
@@ -34,8 +36,8 @@ module UsageTracker
         if settings.blank?
           settings = @@defaults
           log "#{env} configuration block not found in #{rc_file}, using defaults"
-        elsif settings.values_at(*%w(couchdb listen)).any?(&:blank?)
-          raise "Incomplete configuration: please set the 'couchdb' and 'listen' keys"
+        elsif settings.values_at(*%w(adapter database listen)).any?(&:blank?)
+          raise "Incomplete configuration: please set the 'adapter', 'database' and 'listen' keys"
         end
 
         host, port = settings.delete('listen').split(':')
@@ -54,6 +56,10 @@ module UsageTracker
       @database or raise "Not connected to the database"
     end
 
+    def adapter
+      @adapter or raise "Not connected to the database adapter"
+    end
+
     # Connects to the configured CouchDB and memoizes the
     # CouchRest::Database connection into an instance variable
     # and calls +load_views!+
@@ -61,15 +67,8 @@ module UsageTracker
     # Raises RuntimeError if the connection could not be established
     #
     def connect!
-      @database =
-        CouchRest.database!(settings.couchdb).tap do |db|
-          db.info
-          log "Connected to database #{settings.couchdb}"
-        end
-
-      load_views!
-    rescue Errno::ECONNREFUSED, RestClient::Exception => e
-      raise "Unable to connect to database #{settings.couchdb}: #{e.message}"
+      @adapter = Adapter::new settings
+      @database = @adapter.database
     end
 
     def write_pid!(pid = $$)
@@ -87,29 +86,6 @@ module UsageTracker
       log.error message
       Kernel.raise Error, message
     end
-
-    private
-      # Loads CouchDB views from views.yml and verifies that
-      # they are loaded in the current instance, upgrading
-      # them if necessary.
-      def load_views!
-        new = YAML.load ERB.new(
-          Pathname.new(__FILE__).dirname.join('..', 'config', 'views.yml').read
-        ).result
-
-        id  = new['_id']
-        old = database.get id
-
-        if old['version'].to_i < new['version'].to_i
-          log "Upgrading Design Document #{id} to v#{new['version']}"
-          database.delete_doc old
-          database.save_doc new
-        end
-
-      rescue RestClient::ResourceNotFound
-        log "Creating Design Document #{id} v#{new['version']}"
-        database.save_doc new
-      end
   end
 
   class Error < StandardError; end
