@@ -12,9 +12,7 @@ What is it?
 Does it work?
 =============
 
-Yes, but the release is still incomplete, because currently tests are too
-tied to Panmind logic.
-
+Yes but the test suite is incomplete. 
 If you can help in complete the test suite, it is much appreciated :-).
 
 Deploying
@@ -60,6 +58,17 @@ Deploying
 Testing
 =======
 
-The current test suite, brutally extracted from Panmind codebase, is in the
-`middleware_test.rb` file at the root of the Gem distribution. It is of no
-use except Panmind, but it's a start for writing new ones. Please help! :-)
+Our will is to test the Evented code in isolation using rspec and em-rspec gem. 
+Tests are still incomplete. You can start the running: 
+
+> rspec spec/ 
+
+
+All required gems for testing should be installed running: 
+
+> bundle install
+
+About the middleware, it's probably better for you to test that in your own 
+app's integration test suite. Some sample code has been brutally extracted from 
+Panmind's codebase and is included in middleware_test.rb file. 
+
