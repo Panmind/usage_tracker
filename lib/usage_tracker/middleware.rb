@@ -6,10 +6,12 @@ require 'usage_tracker/railtie' if defined?(Rails)
 # This middleware extracts some data from the incoming request
 # and sends it to the reactor, that parses and stores it.
 #
+
+
 module UsageTracker
   class Middleware
     @@headers = [
-      "REMOTE_ADDR",
+      # "REMOTE_ADDR",
       "REQUEST_METHOD",
       "PATH_INFO",
       "REQUEST_URI",
@@ -50,13 +52,14 @@ module UsageTracker
 
       begin
         data = {
-          :user_id  => env['rack.session'][:user_id],
-          :duration => ((req_end - req_start) * 1000).to_i,
-          :backend  => @@backend,
-          :xhr      => env['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest',
-          :context  => env[Context.key],
-          :env      => {},
-          :status   => response[0] # response contains [status, headers, body]
+          :user_id   => env['rack.session'][:user_id],
+          :remote_ip => env['action_dispatch.remote_ip'].to_s, 
+          :duration  => ((req_end - req_start) * 1000).to_i,
+          :backend   => @@backend,
+          :xhr       => env['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest',
+          :context   => env[Context.key],
+          :env       => {},
+          :status    => response[0] # response contains [status, headers, body]
         }
 
         @@headers.each {|key| data[:env][key.downcase] = env[key] unless env[key].blank?}
