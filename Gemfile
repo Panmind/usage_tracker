@@ -1,5 +1,7 @@
 source :rubygems
 
+gem 'bson_ext'
+gem 'mongo'
 gem 'couchrest' 
 gem 'activesupport', '~>3.0.3'
 gem 'json' 
