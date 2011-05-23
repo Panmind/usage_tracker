@@ -36,8 +36,9 @@ Deploying
    or can be put under Upstart using the provided configuration file located in
    `config/usage_tracker_upstart.conf`. Check it out and modify it to suit your needs.
 
-   The daemon logs to `log/usage_tracker.log` and rotates its logs when receives
-   the USR1 signal.
+   The daemon logs to `log/usage_tracker.log` if the log directory exists and rotates its 
+   logs when receives the USR1 signal. If log directory does not exist it logs in the 
+   current directory.
 
  * The daemon writes its pid into tmp/pids/usage\_tracker.pid
 
@@ -61,7 +62,7 @@ Testing
 Our will is to test the Evented code in isolation using rspec and em-rspec gem. 
 Tests are still incomplete. You can start the running: 
 
-> rspec spec/ 
+> bundle exec rspec spec 
 
 
 All required gems for testing should be installed running: 
