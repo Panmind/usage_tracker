@@ -12,16 +12,6 @@ module UsageTracker
       end
     end
 
-    # Debug hook
-    if UsageTracker.env == 'test'
-      alias :real_receive_data :receive_data
-      def receive_data(data)
-        UsageTracker.log.debug "Received #{data.inspect}"
-        ret = real_receive_data(data)
-        UsageTracker.log.debug ret ? "Stored #{ret}" : 'Failed to store input data'
-      end
-    end
-
     private
       def parse(data)
         JSON(data).tap {|h| h.reject! {|k,v| v.nil?}}
