@@ -15,12 +15,6 @@ module UsageTracker
       @env ||= ENV['RAILS_ENV'] || ARGV[0] || 'development'
     end
 
-    @@defaults = {
-      'adapter' => 'couchdb',
-      'database' => 'http://127.0.0.1:5984/usage_tracker',
-      'listen'  => '127.0.0.1:5985'
-    }
-
     # Memoizes settings from the ./config/usage_tracker.yml file,
     # relative from __FILE__ and searches for the "usage_tracker"
     # configuration block. Raises RuntimeError if it cannot find
