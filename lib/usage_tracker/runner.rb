@@ -39,7 +39,7 @@ module UsageTracker
       [$stdin, $stdout, $stderr].each {|io| io.reopen '/dev/null'}
 
     rescue Exception => e
-      message = e.message == 'no datagram socket' ? "Unable to bind #{host}:#{port}" : e
+      message = e.message == 'no datagram socket' ? "Unable to bind #{UsageTracker.settings.host}:#{UsageTracker.settings.port}" : e
       log.fatal message
       $stderr.puts message unless $stderr.closed?
       EventMachine.stop_event_loop
