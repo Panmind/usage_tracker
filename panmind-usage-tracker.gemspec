@@ -5,19 +5,20 @@
 
 Gem::Specification.new do |s|
   s.name = %q{panmind-usage-tracker}
-  s.version = "0.4.0"
+  s.version = "1.0.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["Marcello Barnaba", "Christian Wörner"]
-  s.date = %q{2011-05-19}
+  s.authors = ["Marcello Barnaba", "Christian Wörner", "Fabrizio Regini"]
+  s.date = %q{2011-05-24}
   s.default_executable = %q{usage_tracker}
-  s.description = %q{This software implements a Rails 3 Middleware and an EventMachine reactor to store into CouchDB the results of HTTP request processing}
-  s.email = %q{vjt@openssl.it}
+  s.description = %q{This software implements a Rails 3 Middleware and an EventMachine reactor to store into a database the results of HTTP request processing}
+  s.email = %q{info@panmind.org}
   s.executables = ["usage_tracker"]
   s.extra_rdoc_files = [
     "README.md"
   ]
   s.files = [
+    "Gemfile",
     "README.md",
     "Rakefile",
     "VERSION",
@@ -33,18 +34,28 @@ Gem::Specification.new do |s|
     "lib/usage_tracker/middleware.rb",
     "lib/usage_tracker/railtie.rb",
     "lib/usage_tracker/reactor.rb",
-    "middleware_test.rb",
-    "panmind-usage-tracker.gemspec"
+    "lib/usage_tracker/runner.rb",
+    "panmind-usage-tracker.gemspec",
+    "spec/spec_helper.rb",
+    "spec/usage_tracker_spec.rb"
   ]
   s.homepage = %q{http://github.com/Panmind/usage_tracker}
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.6.2}
-  s.summary = %q{Write your application request logs in CouchDB}
+  s.summary = %q{Write your application request logs on CouchDB or MongoDB}
 
   if s.respond_to? :specification_version then
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
+      s.add_runtime_dependency(%q<bson_ext>, [">= 0"])
+      s.add_runtime_dependency(%q<mongo>, [">= 0"])
+      s.add_runtime_dependency(%q<couchrest>, [">= 0"])
+      s.add_runtime_dependency(%q<activesupport>, ["~> 3.0.3"])
+      s.add_runtime_dependency(%q<json>, [">= 0"])
+      s.add_runtime_dependency(%q<eventmachine>, [">= 0"])
+      s.add_runtime_dependency(%q<freegenie-em-spec>, ["= 0.2.3"])
+      s.add_runtime_dependency(%q<rspec>, [">= 0"])
       s.add_runtime_dependency(%q<rails>, ["~> 3.0"])
       s.add_runtime_dependency(%q<eventmachine>, [">= 0"])
       s.add_runtime_dependency(%q<couchrest>, [">= 0"])
@@ -52,6 +63,14 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<bson>, [">= 0"])
       s.add_runtime_dependency(%q<bson_ext>, [">= 0"])
     else
+      s.add_dependency(%q<bson_ext>, [">= 0"])
+      s.add_dependency(%q<mongo>, [">= 0"])
+      s.add_dependency(%q<couchrest>, [">= 0"])
+      s.add_dependency(%q<activesupport>, ["~> 3.0.3"])
+      s.add_dependency(%q<json>, [">= 0"])
+      s.add_dependency(%q<eventmachine>, [">= 0"])
+      s.add_dependency(%q<freegenie-em-spec>, ["= 0.2.3"])
+      s.add_dependency(%q<rspec>, [">= 0"])
       s.add_dependency(%q<rails>, ["~> 3.0"])
       s.add_dependency(%q<eventmachine>, [">= 0"])
       s.add_dependency(%q<couchrest>, [">= 0"])
@@ -60,6 +79,14 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<bson_ext>, [">= 0"])
     end
   else
+    s.add_dependency(%q<bson_ext>, [">= 0"])
+    s.add_dependency(%q<mongo>, [">= 0"])
+    s.add_dependency(%q<couchrest>, [">= 0"])
+    s.add_dependency(%q<activesupport>, ["~> 3.0.3"])
+    s.add_dependency(%q<json>, [">= 0"])
+    s.add_dependency(%q<eventmachine>, [">= 0"])
+    s.add_dependency(%q<freegenie-em-spec>, ["= 0.2.3"])
+    s.add_dependency(%q<rspec>, [">= 0"])
     s.add_dependency(%q<rails>, ["~> 3.0"])
     s.add_dependency(%q<eventmachine>, [">= 0"])
     s.add_dependency(%q<couchrest>, [">= 0"])
