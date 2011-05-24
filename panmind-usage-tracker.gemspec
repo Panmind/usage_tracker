@@ -8,11 +8,11 @@ Gem::Specification.new do |s|
   s.version = "1.0.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["Marcello Barnaba", "Christian Wörner"]
+  s.authors = ["Marcello Barnaba", "Christian Wörner", "Fabrizio Regini"]
   s.date = %q{2011-05-24}
   s.default_executable = %q{usage_tracker}
-  s.description = %q{This software implements a Rails 3 Middleware and an EventMachine reactor to store into CouchDB the results of HTTP request processing}
-  s.email = %q{vjt@openssl.it}
+  s.description = %q{This software implements a Rails 3 Middleware and an EventMachine reactor to store into a database the results of HTTP request processing}
+  s.email = %q{info@panmind.org}
   s.executables = ["usage_tracker"]
   s.extra_rdoc_files = [
     "README.md"
@@ -42,7 +42,7 @@ Gem::Specification.new do |s|
   s.homepage = %q{http://github.com/Panmind/usage_tracker}
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.6.2}
-  s.summary = %q{Write your application request logs in CouchDB}
+  s.summary = %q{Write your application request logs on CouchDB or MongoDB}
 
   if s.respond_to? :specification_version then
     s.specification_version = 3
