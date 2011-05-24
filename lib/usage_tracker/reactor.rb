@@ -54,7 +54,7 @@ module UsageTracker
         tries = 0
 
         begin
-          doc['_id'] = make_id
+          UsageTracker.log.debug "Received #{doc.inspect}" 
           UsageTracker.adapter.save_doc(doc)
 
         rescue RestClient::Conflict => e
@@ -65,19 +65,9 @@ module UsageTracker
             UsageTracker.log.error "Losing '#{doc.inspect}' because of too many conflicts"
           end
 
-        rescue Encoding::UndefinedConversionError
+        rescue 
           UsageTracker.log.error "Losing '#{doc.inspect}' because #$!" # FIXME handle this error properly
         end
-      end
-
-      # Timestamp as _id has the advantage that documents
-      # are sorted automatically by CouchDB.
-      #
-      # Eventual duplication (multiple servers) is (possibly)
-      # avoided by adding a random digit at the end.
-      #
-      def make_id
-        Time.now.to_f.to_s.ljust(16, '0') + rand(10).to_s
       end
   end
 
