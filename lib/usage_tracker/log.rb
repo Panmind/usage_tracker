@@ -2,6 +2,15 @@ require 'logger'
 
 module UsageTracker
   class Log
+
+    Levels = {
+        :fatal => Logger::FATAL, 
+        :erorr => Logger::ERROR, 
+        :warn  => Logger::WARN, 
+        :info  => Logger::INFO, 
+        :debug => Logger::DEBUG 
+    }
+
     attr_reader :path
 
     [:debug, :info, :warn, :error, :fatal].each do |severity|
@@ -40,6 +49,12 @@ module UsageTracker
     def rotate
       close
       open
+    end
+
+    def level=(level)
+      level = level.to_sym 
+      raise "Invalid log level" unless Levels.keys.include?(level)
+      @logger.level = Levels[level]
     end
   end
 end

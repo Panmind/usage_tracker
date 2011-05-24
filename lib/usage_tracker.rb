@@ -41,6 +41,9 @@ module UsageTracker
 
         settings['host'], settings['port'] = host, port.to_i
 
+        settings['log_level'] ||= :warn
+        log.level = settings['log_level']
+
         OpenStruct.new settings
       end
     end

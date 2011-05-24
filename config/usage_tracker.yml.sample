@@ -1,18 +1,20 @@
 defaults: &defaults
   # Available adapters: 'couchdb', 'mongodb'
-  adapter: 'couchdb'
+  # adapter: 'couchdb'
 
   # CouchDB connect settings
-  database: "http://127.0.0.1:5984/usage_tracker"
+  # database: "http://127.0.0.1:5984/usage_tracker"
 
-  # MongoDB connect settings
-  # database:
-  #   name: "usage_tracker"
-  #   host: "localhost"
-  #   port: 27017
-  #   collection: "data"
+  #  MongoDB connect settings
+  adapter: 'mongodb' 
+  database:
+    name: "usage_tracker"
+    host: "127.0.0.1"
+    port: 27017
+    collection: "data"
 
-  listen:  "localhost:5985"
+  listen:  "127.0.0.1:5985"
+  log_level: 'debug'
 
 development:
   <<: *defaults
@@ -22,4 +24,7 @@ production:
 
 test:
   <<: *defaults
-  couchdb: "http://admin:suxsux@127.0.0.1:5984/usage_tracker_test"
+  
+spec:
+  <<: *defaults
+
