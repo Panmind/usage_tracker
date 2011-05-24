@@ -11,7 +11,7 @@ module UsageTracker
   class Middleware
 
     @@host    = 'localhost'
-    @@port    = 5984
+    @@port    = 5985
     @@backend = `hostname`.strip
     @@logger  = UsageTracker::Log.new 
 
@@ -40,8 +40,11 @@ module UsageTracker
       "QUERY_STRING"
     ].freeze
 
-    def initialize(app)
-      @app    = app
+    def initialize(app, options)
+      @@host    = options[:host]     if options.keys.include?(:host) 
+      @@port    = options[:port]     if options.keys.include?(:port) 
+      @@backend = options[:backend]  if options.keys.include?(:backend)
+      @app      = app
     end
 
     def call(env)
@@ -77,12 +80,6 @@ module UsageTracker
     end
 
     class << self
-
-      def config(options) 
-        @@host    = options.delete :host 
-        @@port    = options.delete :port 
-        @@backend = options.delete :backend
-      end
 
       def development? 
         defined?(Rails) && Rails.env.development? 
