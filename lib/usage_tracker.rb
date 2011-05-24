@@ -28,8 +28,7 @@ module UsageTracker
         settings = YAML.load(rc_file.read)[env] if rc_file.exist?
 
         if settings.blank?
-          settings = @@defaults
-          log "#{env} configuration block not found in #{rc_file}, using defaults"
+          raise "Configuration missing for #{env}"
         elsif settings.values_at(*%w(adapter database listen)).any?(&:blank?)
           raise "Incomplete configuration: please set the 'adapter', 'database' and 'listen' keys"
         end
