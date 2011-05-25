@@ -40,7 +40,7 @@ module UsageTracker
       "QUERY_STRING"
     ].freeze
 
-    def initialize(app, options)
+    def initialize(app, options={})
       @@host    = options[:host]     if options.keys.include?(:host) 
       @@port    = options[:port]     if options.keys.include?(:port) 
       @@backend = options[:backend]  if options.keys.include?(:backend)
