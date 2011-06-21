@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{panmind-usage-tracker}
-  s.version = "1.0.1"
+  s.version = "1.1.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Marcello Barnaba", "Christian Wörner", "Fabrizio Regini"]
-  s.date = %q{2011-05-25}
+  s.date = %q{2011-06-21}
   s.default_executable = %q{usage_tracker}
   s.description = %q{This software implements a Rails 3 Middleware and an EventMachine reactor to store into a database the results of HTTP request processing}
   s.email = %q{info@panmind.org}
