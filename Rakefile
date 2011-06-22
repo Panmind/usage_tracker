@@ -1,4 +1,4 @@
-# -*- encoding: utf-8 -*-
+# encoding: utf-8 
 #
 require 'rake'
 require 'rake/rdoctask'
@@ -13,9 +13,9 @@ begin
                           'an EventMachine reactor to store into a database the ' \
                           'results of HTTP request processing'
 
-    gemspec.authors     = ['Marcello Barnaba', 'Christian Wörner', 'Fabrizio Regini']
+    gemspec.authors     = ['Marcello Barnaba', 'Christian Worner', 'Fabrizio Regini']
     gemspec.homepage    = 'http://github.com/Panmind/usage_tracker'
-    gemspec.email       = 'info@panmind.org'
+    gemspec.email       = 'info@panmind.com'
 
     gemspec.add_dependency('rails', '~> 3.0')
     gemspec.add_dependency('eventmachine')
