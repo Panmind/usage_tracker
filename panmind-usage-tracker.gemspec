@@ -5,20 +5,21 @@
 
 Gem::Specification.new do |s|
   s.name = %q{panmind-usage-tracker}
-  s.version = "1.1.0"
+  s.version = "1.1.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["Marcello Barnaba", "Christian Wörner", "Fabrizio Regini"]
-  s.date = %q{2011-06-21}
+  s.authors = ["Marcello Barnaba", "Christian Worner", "Fabrizio Regini"]
+  s.date = %q{2011-06-22}
   s.default_executable = %q{usage_tracker}
   s.description = %q{This software implements a Rails 3 Middleware and an EventMachine reactor to store into a database the results of HTTP request processing}
-  s.email = %q{info@panmind.org}
+  s.email = %q{info@panmind.com}
   s.executables = ["usage_tracker"]
   s.extra_rdoc_files = [
     "README.md"
   ]
   s.files = [
     "Gemfile",
+    "Gemfile.lock",
     "README.md",
     "Rakefile",
     "VERSION",
