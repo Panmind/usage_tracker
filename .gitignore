@@ -1,6 +1,5 @@
 *.gem
 config/*.yml
-Gemfile.lock
 html
 pkg
 .*.sw?

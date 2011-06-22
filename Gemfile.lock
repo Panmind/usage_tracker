@@ -1,0 +1,40 @@
+GEM
+  remote: http://rubygems.org/
+  specs:
+    activesupport (3.0.3)
+    bson (1.3.1)
+    bson_ext (1.3.1)
+    couchrest (1.0.1)
+      json (>= 1.4.6)
+      mime-types (>= 1.15)
+      rest-client (>= 1.5.1)
+    diff-lcs (1.1.2)
+    eventmachine (0.12.10)
+    freegenie-em-spec (0.2.3)
+    json (1.4.6)
+    mime-types (1.16)
+    mongo (1.3.1)
+      bson (>= 1.3.1)
+    rest-client (1.6.1)
+      mime-types (>= 1.16)
+    rspec (2.6.0)
+      rspec-core (~> 2.6.0)
+      rspec-expectations (~> 2.6.0)
+      rspec-mocks (~> 2.6.0)
+    rspec-core (2.6.4)
+    rspec-expectations (2.6.0)
+      diff-lcs (~> 1.1.2)
+    rspec-mocks (2.6.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  activesupport (~> 3.0.3)
+  bson_ext
+  couchrest
+  eventmachine
+  freegenie-em-spec (= 0.2.3)
+  json
+  mongo
+  rspec
