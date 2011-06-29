@@ -62,7 +62,7 @@ module UsageTracker
           :context   => env[Context.key],
           :env       => {},
           :status    => response[0], # response contains [status, headers, body]
-          :timestamp => Time.now.to_i
+          :timestamp => Time.now.to_f
         }
 
         @@headers.each {|key| data[:env][key.downcase] = env[key] unless env[key].blank?}
