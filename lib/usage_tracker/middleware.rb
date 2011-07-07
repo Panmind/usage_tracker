@@ -22,6 +22,7 @@ module UsageTracker
       "REQUEST_URI",
       "SERVER_PROTOCOL",
       #"HTTP_VERSION",
+      "HTTP_REFERER",
       "HTTP_HOST",
       "HTTP_USER_AGENT",
       "HTTP_ACCEPT",
