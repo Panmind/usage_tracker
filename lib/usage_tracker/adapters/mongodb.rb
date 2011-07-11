@@ -9,6 +9,11 @@ module UsageTracker
       def initialize (settings)
         @database =
           db = Mongo::Connection.new(settings.database['host'], settings.database['port']).db(settings.database['name'])
+
+          if settings.database['username'] || settings.database['password'] 
+            db.authenticate(settings.database['username'], settings.database['password']) 
+          end
+
           @collection = db[settings.database['collection']]
           db
       rescue Errno::ECONNREFUSED, Mongo::ConnectionError => e
